@@ -1,0 +1,194 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Photo Framer</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <script src="../js/jquery-3.3.1.slim.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/app.js"></script>
+    <style>
+      .grid2 {
+        display: grid;
+        grid-template-columns: 20% 75%;
+      }
+
+      .row {
+        grid-row-gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3>Photo Framer</h3>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="card">
+            <div class="card-header">
+              Choose Your Photo
+            </div>
+            <div class="card-body">
+              <div class="field grid2">
+                <label>Select File</label>
+                <input id="input-photo" class="form-control" type="file" />
+              </div>
+              <div class="field">
+                <button id="btn-set-photo" class="btn btn-info">Choose</button>
+              </div>
+              <div class="field">
+                <p>Preview:</p>
+                <img id="preview-photo" />
+              </div>
+              <div class="field grid2">
+                <p></p>
+                <p></p>
+                <label>Add Text</label>
+                <input class="form-control" id="custom-text" />
+                <label>Text X</label>
+                <input class="form-control" min="0" max="1080" type="number" value="100" id="text-x" />
+                <label>Text Y</label>
+                <input class="form-control" min="0" max="1080"  type="number" value="100" id="text-y" />
+                <label>Text Size</label>
+                <input class="form-control" min="10" max="200"  type="number" value="50" id="text-size" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card">
+            <div class="card-header">
+              Choose Your Frame
+            </div>
+            <div class="card-body">
+              <div class="field grid2">
+                <label>Select File</label>
+                <input id="input-frame" class="form-control" type="file" />
+              </div>
+              <div class="field">
+                <button id="btn-set-frame" class="btn btn-info">Choose</button>
+              </div>
+              <div class="field">
+                <p>Preview:</p>
+                <img id="preview-frame" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <button id="btn-process" class="btn btn-success">Process</button>
+          <a class="btn btn-secondary" id="downloadLink" download="RESULT.png"
+            >Download as image</a
+          >
+          <p></p>
+          <canvas style="border: solid 2px #33c1ff;" id="canvas"></canvas>
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const inputFrame = _id("input-frame");
+      const inputPhoto = _id("input-photo");
+      const previewPhoto = _id("preview-photo");
+      const previewFrame = _id("preview-frame");
+      const canvas = _id("canvas");
+      const ctx = canvas.getContext("2d");
+      const WIDTH = 1080;
+      const HEIGHT = 1080;
+      const inputText = _id("custom-text");
+
+      var photoImageData = null;
+      var frameImageData = null;
+
+      function init() {
+        fillPreviewAttrs(previewFrame);
+        fillPreviewAttrs(previewPhoto);
+
+        _id("btn-set-photo").onclick = function (e) {
+          toBase64(inputPhoto, function (result) {
+            previewPhoto.src = result;
+            photoImageData = result;
+          });
+        };
+        _id("btn-set-frame").onclick = function (e) {
+          toBase64(inputFrame, function (result) {
+            previewFrame.src = result;
+            frameImageData = result;
+          });
+        };
+
+        _id("btn-process").onclick = function (e) {
+          processPhoto();
+        };
+
+        _id("downloadLink").onclick = function (e) {
+          saveAsImage(e);
+        };
+
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+      }
+
+      function saveAsImage(e) {
+        const data = canvas.toDataURL("image/png");
+        e.target.href = data;
+      }
+
+      function processPhoto() {
+        if (!frameImageData || !photoImageData) {
+          alert("Photo and Frame must be choosen!");
+          return;
+        }
+
+        //clear
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+        //draw
+        drawUserPhoto();
+      }
+
+      function drawUserPhoto() {
+        //User Photo
+        const photoImg = new Image();
+        photoImg.onload = function () {
+          ctx.drawImage(photoImg, 0, 0, WIDTH, HEIGHT);
+          drawFrame();
+        };
+        photoImg.src = photoImageData;
+      }
+
+      function drawFrame() {
+        //Frame
+        const frameImg = new Image();
+        frameImg.onload = function () {
+          ctx.drawImage(frameImg, 0, 0, WIDTH, HEIGHT);
+          setText();
+        };
+        frameImg.src = frameImageData;
+      }
+
+      function setText() {
+        if (inputText.value == "") {
+          return false;
+        }
+        const textX = _id("text-x").value;
+        const textY = _id("text-y").value;
+        const textSize = _id("text-size").value+"px";
+        ctx.font = textSize+" Arial";
+        ctx.fillText(inputText.value, textX, textY);
+        return true;
+      }
+
+      function fillPreviewAttrs(imgElement) {
+        imgElement.width = 200;
+        imgElement.height = 200;
+        imgElement.className = "img-thumbnail";
+        imgElement.src = "#";
+      }
+
+      init();
+    </script>
+  </body>
+</html>
