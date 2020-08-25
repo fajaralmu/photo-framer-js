@@ -52,6 +52,8 @@
                 <input class="form-control" min="0" max="1080"  type="number" value="100" id="text-y" />
                 <label>Text Size</label>
                 <input class="form-control" min="10" max="200"  type="number" value="50" id="text-size" />
+                <label>Text Color</label>
+                <input class="form-control" type="color" id="text-color" />
               </div>
             </div>
           </div>
@@ -94,9 +96,12 @@
       const previewFrame = _id("preview-frame");
       const canvas = _id("canvas");
       const ctx = canvas.getContext("2d");
+      const inputText = _id("custom-text");
+
+      //canvas
       const WIDTH = 1080;
       const HEIGHT = 1080;
-      const inputText = _id("custom-text");
+      const BG_COLOR = "#FFFFFF";
 
       var photoImageData = null;
       var frameImageData = null;
@@ -142,7 +147,7 @@
         }
 
         //clear
-        ctx.fillStyle = "#FFFFFF";
+        ctx.fillStyle = BG_COLOR;
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
         //draw
@@ -176,6 +181,8 @@
         const textX = _id("text-x").value;
         const textY = _id("text-y").value;
         const textSize = _id("text-size").value+"px";
+
+        ctx.fillStyle = _id("text-color").value;
         ctx.font = textSize+" Arial";
         ctx.fillText(inputText.value, textX, textY);
         return true;
