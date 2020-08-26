@@ -47,13 +47,13 @@
                 <label>Add Text</label>
                 <input class="form-control" id="custom-text" />
                 <label>Text X</label>
-                <input class="form-control" min="0" max="1080" type="number" value="100" id="text-x" />
+                <input type="range" class="form-control text-modifier" min="0" max="1080"   value="100" id="text-x" />
                 <label>Text Y</label>
-                <input class="form-control" min="0" max="1080"  type="number" value="100" id="text-y" />
+                <input class="form-control text-modifier" min="0" max="1080"  type="range"   value="100" id="text-y" />
                 <label>Text Size</label>
-                <input class="form-control" min="10" max="200"  type="number" value="50" id="text-size" />
+                <input class="form-control text-modifier" min="10" max="200"   type="number" value="50" id="text-size" />
                 <label>Text Color</label>
-                <input class="form-control" type="color" id="text-color" />
+                <input class="form-control text-modifier" type="color"  id="text-color" />
               </div>
             </div>
           </div>
@@ -97,6 +97,7 @@
       const canvas = _id("canvas");
       const ctx = canvas.getContext("2d");
       const inputText = _id("custom-text");
+      const textModifiers = document.getElementsByClassName("text-modifier");
 
       //canvas
       const WIDTH = 1080;
@@ -133,6 +134,17 @@
 
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
+
+        initTextModifiersEvents();
+      }
+
+      function initTextModifiersEvents(){
+        for (let i = 0; i < textModifiers.length; i++) {
+          const element = textModifiers[i];
+          element.onchange = function(e){
+            processPhoto();
+          }
+        }
       }
 
       function saveAsImage(e) {
