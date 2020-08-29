@@ -10,7 +10,7 @@
     <style>
       .grid2 {
         display: grid;
-        grid-template-columns: 20% 75%;
+        grid-template-columns: 20% 65% 15%;
       }
 
       .row {
@@ -44,16 +44,22 @@
               <div class="field grid2">
                 <p></p>
                 <p></p>
+                <p></p>
                 <label>Add Text</label>
                 <input class="form-control" id="custom-text" />
+                <span></span>
                 <label>Text X Position</label>
                 <input type="range" class="form-control text-modifier" min="0" max="1080"   value="100" id="text-x" />
+                <spam id="out-txt-x-pos"></spam>
                 <label>Text Y Position</label>
                 <input class="form-control text-modifier" min="0" max="1080"  type="range"   value="100" id="text-y" />
+                 <spam id="out-txt-y-pos"></spam>
                 <label>Text Size</label>
                 <input class="form-control text-modifier" min="10" max="200"  type="range"value="50" id="text-size" />
+                <spam id="out-txt-size"></spam>
                 <label>Text Color</label>
                 <input class="form-control text-modifier" type="color"  id="text-color" />
+                <spam id="out-txt-color"></spam>
               </div>
             </div>
           </div>
@@ -136,6 +142,7 @@
         canvas.height = HEIGHT;
 
         initTextModifiersEvents();
+        setText();
       }
 
       function initTextModifiersEvents(){
@@ -187,14 +194,21 @@
       }
 
       function setText() {
-        if (inputText.value == "") {
-          return false;
-        }
+       
         const textX = _id("text-x").value;
         const textY = _id("text-y").value;
         const textSize = _id("text-size").value+"px";
+        const textColor = _id("text-color").value;
 
-        ctx.fillStyle = _id("text-color").value;
+        _id("out-txt-x-pos").innerHTML = textX;
+        _id("out-txt-y-pos").innerHTML = textY;
+        _id("out-txt-size").innerHTML = textSize;
+        _id("out-txt-color").innerHTML = textColor;
+
+        if (inputText.value == "") {
+          return false;
+        }
+        ctx.fillStyle = textColor;
         ctx.font = textSize+" Arial";
         ctx.fillText(inputText.value, textX, textY);
         return true;
