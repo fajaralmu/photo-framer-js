@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Watermarker</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <script src="../js/jquery-3.3.1.slim.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/app.js"></script>
+    <style>
+      .grid2 {
+        display: grid;
+        grid-template-columns: 20% 65% 15%;
+        grid-column-gap: 10px;
+      }
+
+      .row {
+        grid-row-gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header"><h3>Watermarker</h3></div>
+      <div class="col-6">
+        <div class="card">
+          <div class="card-header">Choose Your Photo</div>
+          <div class="card-body">
+            <div class="field grid2">
+              <label>Select File</label>
+              <input id="input-photo" class="form-control" type="file" multiple/>
+            </div>
+            <div class="field">
+              <button id="btn-set-photo" class="btn btn-info">Choose</button>
+            </div>
+            <div class="field">
+              <p>Preview:</p>
+              <div id="preview-photo" class="row" ></div>
+            </div>
+        </div>
+        </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+      const inputFrame = _id("input-frame");
+      const inputPhoto = _id("input-photo");
+      const previewPhoto = _id("preview-photo");
+
+      function createImg(src){
+        const img = document.createElement("img");
+        img.src = src;
+        img.width = 200;
+        img.height = 200;
+        img.className = "col-md-6";
+        img.style.border = "solid 1px black";
+        return img;
+      }
+
+      function init(){
+
+        _id("btn-set-photo").onclick = function (e) {
+            previewPhoto.innerHTML = "";
+            const files = inputPhoto.files;
+            for (let i = 0; i < files.length; i++) {
+                const element = files[i];
+                toBase64Multiple(element, function (result) {
+                    const img = createImg(result);
+                    previewPhoto.appendChild(img);
+                });
+            } 
+        };
+
+
+      }
+
+      init();
+</script>
+</html>
