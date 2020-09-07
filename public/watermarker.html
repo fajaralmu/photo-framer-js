@@ -35,15 +35,12 @@
                 <button id="btn-watermark" class="btn btn-primary">Process</button>
                 <button id="btn-clear-photo" class="btn btn-danger">Clear</button>
                 <button id="btn-download" class="btn btn-secondary">Download Result</button>
-              </div>
-              <div class="field">
-                <p>Preview:</p>
-                <div id="preview-photo"></div>
-              </div>
+              </div> 
             </div>
           </div>
         </div>
         <div class="col-md-6">
+            <div class="card">
           <div class="card-header">Choose Your Watermark</div>
           <div class="card-body">
             <div class="field grid2">
@@ -56,19 +53,29 @@
             <div>
               <p>Preview:</p>
               <img id="preview-watermark" width="200" height="200" />
-            </div>
+            </div></div>
           </div>
         </div>
       </div>
+      <div  >
+        <p>Preview:</p>
+        <div id="preview-photo"></div>
+      </div>
+      <div hidden="true" id="temp-canvas"></div>
     </div>
+  
   </body>
   <script type="text/javascript">
     const inputWatermark = byId("input-watermark");
     const inputPhoto = byId("input-photo");
     const previewPhoto = byId("preview-photo");
     const previewWatermark = byId("preview-watermark");
-    const HEIGHT = 500;
-    const WIDTH = 500;
+    const tempCanvasWrap = byId("temp-canvas");
+    const REAL_HEIGHT = 1080;
+    const REAL_WIDTH = 1920;
+    const HEIGHT = 200;
+    const WIDTH = 200; 
+    let Images_data = [];
 
     function createCanvasWithImage(src) {
       const canvas = document.createElement("canvas");
@@ -98,6 +105,8 @@
 
     function clearPreview(){
         previewPhoto.innerHTML = "";
+        tempCanvasWrap.innerHTML = "";
+        Images_data = {}; 
     }
 
     function init() {
@@ -109,6 +118,7 @@
           toBase64Multiple(element, function (result) {
             const img = createCanvasWithImage(result);
             previewPhoto.appendChild(img);
+            Images_data[i]=(img);
           });
         }
       };
@@ -133,7 +143,7 @@
     }
 
     function downloadResult(){
-        const previewCanvas = document.getElementsByClassName("img-previews");
+        const previewCanvas = document.getElementsByClassName("temp-canvas");
         for (let i = 0; i < previewCanvas.length; i++) {
             const canvas = previewCanvas[i];
             const data = canvas.toDataURL("image/png");
@@ -142,7 +152,7 @@
             document.body.appendChild(a);   
             a.href = data;
             a.setAttribute("hidden", "true");
-            a.download = "Watermarked_"+i+".png"; 
+            a.download = "Watermarked_"+i+(new Date())+".png"; 
             a.click();   
         }
     }
@@ -155,6 +165,16 @@
                 const canvas = previewCanvas[i];
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(watermarkImg, 0, 0, WIDTH, HEIGHT);
+
+                const tempCanvs = document.createElement("canvas");
+                tempCanvs.className="temp-canvas";  
+                tempCanvs.width = REAL_WIDTH;
+                tempCanvs.height = REAL_HEIGHT;
+                const ctxTemp = tempCanvs.getContext("2d");
+                ctxTemp.drawImage(Images_data[i], 0, 0, REAL_WIDTH, REAL_HEIGHT);
+                ctxTemp.drawImage(watermarkImg, 0, 0, REAL_WIDTH, REAL_WIDTH);
+
+                tempCanvasWrap.appendChild(tempCanvs);
             }
         }
         watermarkImg.src = previewWatermark.src;
