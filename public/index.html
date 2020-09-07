@@ -89,8 +89,7 @@
         <div class="col-12">
           <button id="btn-process" class="btn btn-success">Process</button>
           <a style="color:white" class="btn btn-secondary" id="downloadLink" download="RESULT.png"
-            >Download as image</a
-          >
+            >Download as image</a>
           <p></p>
           <canvas style="border: solid 2px #33c1ff;" id="canvas"></canvas>
           <p></p>
@@ -98,13 +97,13 @@
       </div>
     </div>
     <script type="text/javascript">
-      const inputFrame = _id("input-frame");
-      const inputPhoto = _id("input-photo");
-      const previewPhoto = _id("preview-photo");
-      const previewFrame = _id("preview-frame");
-      const canvas = _id("canvas");
+      const inputFrame = byId("input-frame");
+      const inputPhoto = byId("input-photo");
+      const previewPhoto = byId("preview-photo");
+      const previewFrame = byId("preview-frame");
+      const canvas = byId("canvas");
       const ctx = canvas.getContext("2d");
-      const inputText = _id("custom-text");
+      const inputText = byId("custom-text");
       const textModifiers = document.getElementsByClassName("text-modifier");
 
       //canvas
@@ -119,24 +118,24 @@
         fillPreviewAttrs(previewFrame);
         fillPreviewAttrs(previewPhoto);
 
-        _id("btn-set-photo").onclick = function (e) {
+        byId("btn-set-photo").onclick = function (e) {
           toBase64(inputPhoto, function (result) {
             previewPhoto.src = result;
             photoImageData = result;
           });
         };
-        _id("btn-set-frame").onclick = function (e) {
+        byId("btn-set-frame").onclick = function (e) {
           toBase64(inputFrame, function (result) {
             previewFrame.src = result;
             frameImageData = result;
           });
         };
 
-        _id("btn-process").onclick = function (e) {
+        byId("btn-process").onclick = function (e) {
           processPhoto();
         };
 
-        _id("downloadLink").onclick = function (e) {
+        byId("downloadLink").onclick = function (e) {
           saveAsImage(e);
         };
 
@@ -197,15 +196,15 @@
 
       function setText() {
        
-        const textX = _id("text-x").value;
-        const textY = _id("text-y").value;
-        const textSize = _id("text-size").value+"px";
-        const textColor = _id("text-color").value;
+        const textX = byId("text-x").value;
+        const textY = byId("text-y").value;
+        const textSize = byId("text-size").value+"px";
+        const textColor = byId("text-color").value;
 
-        _id("out-txt-x-pos").innerHTML = textX;
-        _id("out-txt-y-pos").innerHTML = textY;
-        _id("out-txt-size").innerHTML = textSize;
-        _id("out-txt-color").innerHTML = textColor;
+        byId("out-txt-x-pos").innerHTML = textX;
+        byId("out-txt-y-pos").innerHTML = textY;
+        byId("out-txt-size").innerHTML = textSize;
+        byId("out-txt-color").innerHTML = textColor;
 
         if (inputText.value == "") {
           return false;

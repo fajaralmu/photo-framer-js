@@ -1,4 +1,4 @@
-function _id(id){
+function byId(id){
     return document.getElementById(id);
 }
 

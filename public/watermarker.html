@@ -34,6 +34,7 @@
                 <button id="btn-set-photo" class="btn btn-info">Choose</button>
                 <button id="btn-watermark" class="btn btn-primary">Process</button>
                 <button id="btn-clear-photo" class="btn btn-danger">Clear</button>
+                <button id="btn-download" class="btn btn-secondary">Download Result</button>
               </div>
               <div class="field">
                 <p>Preview:</p>
@@ -62,10 +63,10 @@
     </div>
   </body>
   <script type="text/javascript">
-    const inputWatermark = _id("input-watermark");
-    const inputPhoto = _id("input-photo");
-    const previewPhoto = _id("preview-photo");
-    const previewWatermark = _id("preview-watermark");
+    const inputWatermark = byId("input-watermark");
+    const inputPhoto = byId("input-photo");
+    const previewPhoto = byId("preview-photo");
+    const previewWatermark = byId("preview-watermark");
     const HEIGHT = 500;
     const WIDTH = 500;
 
@@ -100,7 +101,7 @@
     }
 
     function init() {
-      _id("btn-set-photo").onclick = function (e) {
+      byId("btn-set-photo").onclick = function (e) {
         clearPreview();
         const files = inputPhoto.files;
         for (let i = 0; i < files.length; i++) {
@@ -112,19 +113,38 @@
         }
       };
 
-      _id("btn-set-watermark").onclick = function (e) {
+      byId("btn-set-watermark").onclick = function (e) {
         toBase64(inputWatermark, function (res) {
           previewWatermark.src = res;
         });
       };
 
-      _id("btn-watermark").onclick = function(e){
+      byId("btn-watermark").onclick = function(e){
         processWatermark();
       }
 
-      _id("btn-clear-photo").onclick = function(e){
+      byId("btn-clear-photo").onclick = function(e){
         clearPreview();
       }
+
+      byId("btn-download").onclick = function(e){
+          downloadResult();
+      }
+    }
+
+    function downloadResult(){
+        const previewCanvas = document.getElementsByClassName("img-previews");
+        for (let i = 0; i < previewCanvas.length; i++) {
+            const canvas = previewCanvas[i];
+            const data = canvas.toDataURL("image/png");
+            
+            let a = document.createElement("a");  
+            document.body.appendChild(a);   
+            a.href = data;
+            a.setAttribute("hidden", "true");
+            a.download = "Watermarked_"+i+".png"; 
+            a.click();   
+        }
     }
 
     function processWatermark(){
