@@ -8,12 +8,29 @@ function byId(id) {
  * @param {*} callback 
  */
 function toBase64(fileInput, callback) {
+     
     const reader = new FileReader();
     reader.readAsDataURL(fileInput.files[0]);
     reader.onload = () => callback(reader.result);
     reader.onerror = error => {
         alert("Error Loading File");
     }
+}
+
+function toBase64v2(fileInput) {
+    return new Promise(function(resolve, reject){
+        try{
+            const reader = new FileReader();
+            reader.readAsDataURL(fileInput.files[0]);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => {
+                reject(error);
+            }
+        }catch(e){
+            reject(e);
+        }
+    });
+   
 }
 
 /**

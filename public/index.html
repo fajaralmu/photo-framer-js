@@ -11,7 +11,7 @@
     <script src="../js/dialogs.js"></script>
     <style>
       
-      .grid2 {
+      .control-panel {
         display: grid;
         grid-template-columns: 20% 65% 15%;
         grid-column-gap: 10px;
@@ -45,25 +45,38 @@
                 <p>Preview:</p>
                 <img id="preview-photo" />
               </div>
-              <div class="field grid2">
+
+              <h2>Preview Controller</h2>
+              <div class="field control-panel"> 
+
                 <p></p>
+                <label style="text-align: center;">Text Property</label>
                 <p></p>
-                <p></p>
-                <label>Add Text</label>
-                <input class="form-control" id="custom-text" />
+                <label>Text</label>
+                <input type="text" value="Kafila Media" initialValue="Kafila Media" class="form-control" placeholder="Custom Text" id="custom-text" />
                 <span></span>
                 <label>Text X Position</label>
-                <input type="range" class="form-control text-modifier" min="0" max="1080"   value="100" id="text-x" />
-                <spam id="out-txt-x-pos"></spam>
+                <input type="range" class="form-control text-modifier" min="0" max="1080"   initialValue="100" id="text-x" />
+                <spam id="out-text-x"></spam>
                 <label>Text Y Position</label>
-                <input class="form-control text-modifier" min="0" max="1080"  type="range"   value="100" id="text-y" />
-                 <spam id="out-txt-y-pos"></spam>
+                <input type="range" class="form-control text-modifier" min="0" max="1080"  initialValue="100" id="text-y" />
+                 <spam id="out-text-y"></spam>
                 <label>Text Size</label>
-                <input class="form-control text-modifier" min="10" max="200"  type="range"value="50" id="text-size" />
-                <spam id="out-txt-size"></spam>
+                <input type="range" class="form-control text-modifier" min="10" max="200" initialValue="50" id="text-size" />
+                <spam id="out-text-size"></spam>
                 <label>Text Color</label>
-                <input class="form-control text-modifier" type="color"  id="text-color" />
-                <spam id="out-txt-color"></spam>
+                <input type="color" class="form-control text-modifier" initialValue="#cccccc"  id="text-color" />
+                <spam id="out-text-color"></spam>
+                
+                <button class="btn btn-secondary" onclick="setCenter()">Set Center</button>
+                <label style="text-align: center;">Image Property</label>
+                <p></p>
+                <label>X Position</label>
+                <input type="range" class="form-control text-modifier" min="-1080" max="1080" value="0" initialValue="0"  id="image-x" />
+                <spam id="out-image-x"></spam>
+                <label>Y Position</label>
+                <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
+                <spam id="out-image-y"></spam>
               </div>
             </div>
           </div>
@@ -127,16 +140,18 @@
         fillPreviewAttrs(previewPhoto);
 
         byId("btn-set-photo").onclick = function (e) {
-          toBase64(inputPhoto, function (result) {
+           
+          toBase64v2(inputPhoto).then(function (result) {
             previewPhoto.src = result;
             photoImageData = result;
-          });
+          }).catch(function(e){  alert("invalid file"); });
         };
         byId("btn-set-frame").onclick = function (e) {
-          toBase64(inputFrame, function (result) {
+          
+          toBase64v2(inputFrame).then(function (result) {
             previewFrame.src = result;
             frameImageData = result;
-          });
+          }).catch(function(e){  alert("invalid file"); });
         };
 
         byId("btn-process").onclick = function (e) {
@@ -144,14 +159,11 @@
         };
 
         downloadButton.onclick = function (e) {
-          
-            
             confirmDialog("Download Result?").then(function(confirm){
               if(confirm){
                 saveAsImage();
               }
             });
-          
         };
 
         initCanvasSize();
@@ -171,8 +183,15 @@
         for (let i = 0; i < textModifiers.length; i++) {
           const element = textModifiers[i];
           element.onchange = function(e){
+            byId("out-"+element.id).innerHTML = element.value;
             processPhoto();
           }
+          
+          //set initial value
+          if(element.getAttribute('initialValue')){
+            element.value = element.getAttribute('initialValue');
+          }
+          byId("out-"+element.id).innerHTML = element.value;
         }
       }
 
@@ -196,6 +215,12 @@
         //draw
         drawUserPhoto();
       }
+      let imageIsCentered = false;
+
+      function setCenter(){
+        imageIsCentered = true;
+        processPhoto();
+      }
 
       function drawUserPhoto() {
         //User Photo
@@ -205,7 +230,7 @@
           console.debug("resized image dimension: ", dimension);
           tempCanvas.width = dimension.width;
           tempCanvas.height = dimension.height;
-          tempCtx.drawImage(img, 0,0, dimension.width, dimension.height);
+          tempCtx.drawImage(img, 0, 0, dimension.width, dimension.height);
           
           const newImg = new Image();
           newImg.src = tempCanvas.toDataURL();
@@ -214,13 +239,19 @@
             console.debug("IMG SIZE: ", newImg.width ,"x", newImg.height);
             var imageX = 0, imageY = 0;
             const canvasX = 0, canvasY = 0;
-            if(dimension.adjustedSide != null){
+            if(imageIsCentered && dimension.adjustedSide != null){
               if(dimension.adjustedSide == "w"){
                 imageX = (dimension.width - WIDTH)/2;
               }else {
                 imageY = (dimension.height - HEIGHT)/2;
               }
-            }
+              updateImageInputRange(imageX, imageY);
+            } else {
+              imageX = byId("image-x").value;
+              imageY = byId("image-y").value;
+            }          
+            
+
             // The source newImg is taken from the coordinates (imageX, imageY), 
             // with a width of WIDTH and a height of HEIGHT. 
             // It is drawn to the canvas at (canvasX, canvasY),
@@ -228,9 +259,18 @@
             ctx.drawImage(newImg, imageX, imageY, WIDTH, HEIGHT, canvasX, canvasY, WIDTH, HEIGHT);
 
             drawFrame();
+            imageIsCentered = false;
           }
+          
         };
         img.src = photoImageData;
+      }
+
+      function updateImageInputRange(imageX,imageY){
+        byId("image-x").value = imageX;
+        byId("image-y").value = imageY;
+        byId("out-image-x").innerHTML = imageX;
+        byId("out-image-y").innerHTML = imageY;
       }
 
       function drawFrame() {
@@ -249,12 +289,7 @@
         const textY = byId("text-y").value;
         const textSize = byId("text-size").value+"px";
         const textColor = byId("text-color").value;
-
-        byId("out-txt-x-pos").innerHTML = textX;
-        byId("out-txt-y-pos").innerHTML = textY;
-        byId("out-txt-size").innerHTML = textSize;
-        byId("out-txt-color").innerHTML = textColor;
-
+ 
         if (inputText.value == "") {
           return false;
         }
