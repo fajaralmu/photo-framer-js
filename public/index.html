@@ -88,13 +88,14 @@
         </div>
         <div class="col-12">
           <button id="btn-process" class="btn btn-success">Process</button>
-          <a style="color:white" class="btn btn-secondary" id="downloadLink" download="RESULT.png"
+          <a style="color:white" class="btn btn-secondary" id="downloadLink" 
             >Download as image</a>
           <p></p>
           <canvas style="border: solid 2px #33c1ff;" id="canvas"></canvas>
           <p></p>
         </div>
       </div>
+      <canvas id="temp-canvas" style="display: none;"></canvas>
     </div>
     <script type="text/javascript">
       const inputFrame = byId("input-frame");
@@ -102,7 +103,9 @@
       const previewPhoto = byId("preview-photo");
       const previewFrame = byId("preview-frame");
       const canvas = byId("canvas");
+      const tempCanvas = byId("temp-canvas");
       const ctx = canvas.getContext("2d");
+      const tempCtx = tempCanvas.getContext("2d");
       const inputText = byId("custom-text");
       const textModifiers = document.getElementsByClassName("text-modifier");
 
@@ -136,14 +139,21 @@
         };
 
         byId("downloadLink").onclick = function (e) {
+          e.target.download = "KafilaFrameResult_"+(new Date()).toISOString()+".png";
           saveAsImage(e);
         };
 
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-
+        initCanvasSize();
         initTextModifiersEvents();
         setText();
+      }
+
+      function initCanvasSize(){
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        
+        tempCanvas.width = WIDTH;
+        tempCanvas.height = HEIGHT;
       }
 
       function initTextModifiersEvents(){
@@ -176,12 +186,38 @@
 
       function drawUserPhoto() {
         //User Photo
-        const photoImg = new Image();
-        photoImg.onload = function () {
-          ctx.drawImage(photoImg, 0, 0, WIDTH, HEIGHT);
-          drawFrame();
+        const img = new Image();
+        img.onload = function () {
+          const dimension = caliberateImageSize(img);
+          console.debug("resized image dimension: ", dimension);
+          tempCanvas.width = dimension.width;
+          tempCanvas.height = dimension.height;
+          tempCtx.drawImage(img, 0,0, dimension.width, dimension.height);
+          
+          const newImg = new Image();
+          newImg.src = tempCanvas.toDataURL();
+
+          newImg.onload = function(){
+            console.debug("IMG SIZE: ", newImg.width ,"x", newImg.height);
+            var imageX = 0, imageY = 0;
+            const canvasX = 0, canvasY = 0;
+            if(dimension.adjustedSide != null){
+              if(dimension.adjustedSide == "w"){
+                imageX = (dimension.width - WIDTH)/2;
+              }else {
+                imageY = (dimension.height - HEIGHT)/2;
+              }
+            }
+            // The source newImg is taken from the coordinates (imageX, imageY), 
+            // with a width of WIDTH and a height of HEIGHT. 
+            // It is drawn to the canvas at (canvasX, canvasY),
+            // where it is given a width of WIDTH and a height of HEIGHT.
+            ctx.drawImage(newImg, imageX, imageY, WIDTH, HEIGHT, canvasX, canvasY, WIDTH, HEIGHT);
+
+            drawFrame();
+          }
         };
-        photoImg.src = photoImageData;
+        img.src = photoImageData;
       }
 
       function drawFrame() {

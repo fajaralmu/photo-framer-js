@@ -105,6 +105,7 @@
       const ctx = canvas.getContext("2d");
       const img = new Image();
       img.onload = function () {
+        console.debug("IMG SIZE: ", img.width ,"x", img.height);
         ctx.drawImage(img, 0, 0, WIDTH, HEIGHT);
       };
       img.src = src;
