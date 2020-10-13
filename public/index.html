@@ -155,7 +155,7 @@
       <div class="col-6">
         <div class="card">
           <div class="card-header">Result Preview</div>
-          <div class="card-body">  <img id="result-preview"  /> </div>
+          <div class="card-body">  <img class="img-thumbnail" id="result-preview"  /> </div>
           <div class="card-footer"> <p>Result Scale 1:3</p></div>
         </div>
         <canvas style="display: none" id="canvas"></canvas>
@@ -367,7 +367,7 @@
       function fillPreviewAttrs(imgElement) {
         imgElement.width = 300;
         imgElement.height = 300;
-        imgElement.className = "img-thumbnail";
+       // imgElement.className = "img-thumbnail";
         imgElement.src = "#";
       }
 
