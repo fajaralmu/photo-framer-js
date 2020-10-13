@@ -111,18 +111,24 @@
               <div>
             </div>
             </div>
+            
           </div>
-
+          <div class="card-footer">
+            <button id="btn-process" class="btn btn-success">Process</button>
+            <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
+          </div>
         </div>
-
-        <div class="col-12">
-          <button id="btn-process" class="btn btn-success">Process</button>
-          <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
-          <p></p>
-          <canvas style="border: solid 2px #33c1ff;" id="canvas"></canvas>
+        </div>
+        <div class="col-6">
+          <div class="card">
+            <div class="card-header">Result Preview</div>
+            <div class="card-body">  <img id="result-preview"  /> </div>
+            <div class="card-footer"> <p>Result Scale 1:4</p></div>
+          </div>
+          <canvas style="display: none" id="canvas"></canvas>
           <p></p>
         </div>
-      </div>
+       
       <a style="display: none;" id="downloadLink"></a>
       <canvas id="temp-canvas" style="display: none;"></canvas>
     </div>
@@ -131,6 +137,7 @@
       const inputPhoto = byId("input-photo");
       const previewPhoto = byId("preview-photo");
       const previewFrame = byId("preview-frame");
+      const resultPreview = byId("result-preview");
       const canvas = byId("canvas");
       const tempCanvas = byId("temp-canvas");
       const ctx = canvas.getContext("2d");
@@ -145,6 +152,7 @@
       const WIDTH = 1080;
       const HEIGHT = 1080;
       const BG_COLOR = "#FFFFFF";
+      const SCALE = 4;
 
       let photoImageData = null;
       let frameImageData = null;
@@ -193,6 +201,9 @@
         
         tempCanvas.width = WIDTH;
         tempCanvas.height = HEIGHT;
+
+        resultPreview.width = WIDTH/SCALE;
+        resultPreview.height = HEIGHT/SCALE;
       }
 
       function initTextModifiersEvents(){
@@ -294,6 +305,7 @@
         frameImg.onload = function () {
           ctx.drawImage(frameImg, 0, 0, WIDTH, HEIGHT);
           setText();
+          resultPreview.src = canvas.toDataURL();
         };
         frameImg.src = frameImageData;
       }
