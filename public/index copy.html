@@ -15,7 +15,7 @@
         const WIDTH = 1080;
         const HEIGHT = 1080;
         const BG_COLOR = "#FFFFFF";
-        const SCALE = 3;
+        const SCALE = 4;
     </script>
     <style>
       
@@ -31,13 +31,9 @@
 
       .preview-wrapper {
         width: 100%;
-        height: 330;
+        height: 250;
         overflow: scroll;
         border: solid 2px #cccccc;
-      }
-
-      #result-preview{
-        border:solid 2px #cccccc;
       }
     </style>
   </head>
@@ -75,7 +71,13 @@
               Choose Your Frame
             </div>
             <div class="card-body">
-             
+             <div class="field grid2">
+                <label>Select File</label>
+                <input id="input-frame" class="form-control" type="file" />
+              </div>
+              <div class="field">
+                <button id="btn-set-frame" class="btn btn-info">Choose</button>
+              </div>
               <div id="frame-list" class="freme-list row">
 
               </div>
@@ -140,7 +142,7 @@
         <div class="card">
           <div class="card-header">Result Preview</div>
           <div class="card-body">  <img id="result-preview"  /> </div>
-          <div class="card-footer"> <p>Result Scale 1:3</p></div>
+          <div class="card-footer"> <p>Result Scale 1:4</p></div>
         </div>
         <canvas style="display: none" id="canvas"></canvas>
         <p></p>
@@ -149,18 +151,20 @@
       <div class="col-12"><p align="center">Kafila Media 2020</p></div>
       <a style="display: none;" id="downloadLink"></a>
       <canvas id="temp-canvas" style="display: none;"></canvas>
-      <canvas id="temp-frame-canvas" style="display: none;"></canvas>
     </div>
 
    
 
     <script type="text/javascript">
-     // const inputFrame = byId("input-frame");
+      const inputFrame = byId("input-frame");
       const inputPhoto = byId("input-photo");
       const previewPhoto = byId("preview-photo");
       const previewFrame = byId("preview-frame");
       const resultPreview = byId("result-preview");
-     
+      const canvas = byId("canvas");
+      const tempCanvas = byId("temp-canvas");
+      const ctx = canvas.getContext("2d");
+      const tempCtx = tempCanvas.getContext("2d");
       const inputText = byId("custom-text");
       const textModifiers = document.getElementsByClassName("text-modifier");
 
@@ -173,15 +177,6 @@
       let frameImageData = null;
       let imageIsCentered = false;
 
-      //canvas
-      const canvas = byId("canvas");
-      const tempCanvas = byId("temp-canvas");
-      const tempFrameCanvas = byId("temp-frame-canvas");
-
-      const ctx = canvas.getContext("2d");
-      const tempCtx = tempCanvas.getContext("2d");
-      const tempFrameCtx = tempFrameCanvas.getContext("2d");
-
       function init() {
         fillPreviewAttrs(previewFrame);
         fillPreviewAttrs(previewPhoto);
@@ -193,7 +188,14 @@
             photoImageData = result;
           }).catch(function(e){  alert("invalid file"); });
         };
-        
+        byId("btn-set-frame").onclick = function (e) {
+          
+          toBase64v2(inputFrame).then(function (result) {
+            previewFrame.src = result;
+            frameImageData = result;
+          }).catch(function(e){  alert("invalid file"); });
+        };
+
         byId("btn-process").onclick = function (e) {
           imageIsCentered = true;
           processPhoto();
@@ -274,8 +276,6 @@
           console.debug("resized image dimension: ", dimension);
           tempCanvas.width = dimension.width;
           tempCanvas.height = dimension.height;
-          tempCtx.fillStyle = "white";
-          tempCtx.clearRect(0,0,dimension.width, dimension.height);
           tempCtx.drawImage(img, 0, 0, dimension.width, dimension.height);
           
           const newImg = new Image();
@@ -285,9 +285,6 @@
             console.debug("IMG SIZE: ", newImg.width ,"x", newImg.height);
             var imageX = 0, imageY = 0;
             const canvasX = 0, canvasY = 0;
-
-            ctx.fillStyle="white";
-            ctx.clearRect(0,0,WIDTH,HEIGHT);
             if(imageIsCentered && dimension.adjustedSide != null){
               if(dimension.adjustedSide == "w"){
                 imageX = (dimension.width - WIDTH)/2;
@@ -335,12 +332,26 @@
 
       function setText() {
        
-        return true; 
+        return true;
+        /*
+        currently not used
+        const textX = byId("text-x").value;
+        const textY = byId("text-y").value;
+        const textSize = byId("text-size").value+"px";
+        const textColor = byId("text-color").value;
+ 
+        if (inputText.value == "") {
+          return false;
+        }
+        ctx.fillStyle = textColor;
+        ctx.font = textSize+" Arial";
+        ctx.fillText(inputText.value, textX, textY);
+        return true;*/
       }
 
       function fillPreviewAttrs(imgElement) {
-        imgElement.width = 300;
-        imgElement.height = 300;
+        imgElement.width = 200;
+        imgElement.height = 200;
         imgElement.className = "img-thumbnail";
         imgElement.src = "#";
       }
@@ -361,8 +372,7 @@
                 className:'form-control',
                 id: imageName,
                 onchange: function(e){
-                  frameOptionOnChange(e.target);
-                 
+                  alert(imageName);
                 }
               },
               ch2: {
@@ -378,22 +388,6 @@
           });
           frameList.appendChild(listItem);
         }
-      }
-
-      function frameOptionOnChange(input){
-        const imageName = input.id;
-        const img = byId('img-'+imageName);
-        const tempImage = new Image();
-        tempImage.src = img.src;
-        
-        tempImage.onload = function(e){
-          tempFrameCanvas.width = tempImage.width;
-          tempFrameCanvas.height = tempImage.height;
-          tempFrameCtx.drawImage(tempImage,0,0,WIDTH,HEIGHT);
-          frameImageData = tempFrameCanvas.toDataURL();
-          console.debug(imageName," Frame size: ", tempImage.width,"x", tempImage.height);
-        }
-        previewFrame.src = img.src; 
       }
 
       init();
