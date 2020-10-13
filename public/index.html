@@ -39,6 +39,15 @@
       #result-preview{
         border:solid 2px #cccccc;
       }
+
+      .clickable{
+        transition-duration: 300ms;
+      }
+
+      .clickable:hover {
+        background-color: cornflowerblue;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -363,8 +372,12 @@
           const listItem = createHtmlTag({
             tagName:'div', className:'col-6 border rounded',
             ch1:{
-              tagName:'div',
+              tagName:'div', className:'clickable',
               style:{'text-align':'center'},
+              onclick: function(e){
+                byId(imageName).checked = true;
+                frameOptionOnChange(byId(imageName));
+              },
               ch1:{
                 tagName:'input', name:'photo-frame',
                 type:'radio',  className:'form-control',  id: imageName,
