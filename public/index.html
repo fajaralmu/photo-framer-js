@@ -128,7 +128,7 @@
                     <input type="range" class="form-control text-modifier" min="0" max="200"  value="100"  initialValue="100" id="image-scale" />
                     <label><spam id="out-image-scale"></spam>%</label>
                   </div>
-                  <button class="btn btn-secondary" onclick="setCenter()">Set Center</button>
+                  <button class="btn btn-secondary" onclick="setCenter()">Reset Position</button>
                 </div>
              <!-- </div> -->
           </div>
@@ -269,13 +269,17 @@
         canvas.width = dimension.width;
         canvas.height = dimension.height;
 
+        if(imageIsCentered){
+          byId("image-scale").value = 100;
+          byId("out-image-scale").innerHTML = 100;
+        }
         const imageScale = parseInt(byId("image-scale").value);
+        
         dimension.width = dimension.width * (imageScale/100);
         dimension.height = dimension.height * (imageScale/100);
+
         return dimension;
       }
-
-      
 
       function drawUserPhoto() {
         //User Photo
@@ -287,7 +291,6 @@
 
           clearRect(tempCtx, dimensionRaw.width, dimensionRaw.height);
           tempCtx.drawImage(img, 0, 0, dimensionRaw.width, dimensionRaw.height);
-          
           const newImg = new Image();
           newImg.src = tempCanvas.toDataURL();
 
@@ -299,10 +302,12 @@
             clearRect(ctx, WIDTH, HEIGHT);
 
             if(imageIsCentered && dimension.adjustedSide != null){
+              const dimW = dimension.width;
+              const dimH = dimension.height;
               if(dimension.adjustedSide == "w"){
-                imageX = (dimension.width - WIDTH)/2;
+                imageX = (dimW - WIDTH)/2;
               }else {
-                imageY = (dimension.height - HEIGHT)/2;
+                imageY = (dimH - HEIGHT)/2;
               }
               updateImageInputRange(imageX, imageY);
             } else {
