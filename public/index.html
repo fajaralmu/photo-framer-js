@@ -124,6 +124,9 @@
                     <label>Y Position</label>
                     <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
                     <spam id="out-image-y"></spam>
+                    <label>Image Scale</label>
+                    <input type="range" class="form-control text-modifier" min="0" max="200"  value="100"  initialValue="100" id="image-scale" />
+                    <label><spam id="out-image-scale"></spam>%</label>
                   </div>
                   <button class="btn btn-secondary" onclick="setCenter()">Set Center</button>
                 </div>
@@ -186,7 +189,6 @@
         fillPreviewAttrs(previewPhoto);
 
         byId("btn-set-photo").onclick = function (e) {
-           
           toBase64v2(inputPhoto).then(function (result) {
             previewPhoto.src = result;
             photoImageData = result;
@@ -199,10 +201,8 @@
         };
 
         downloadButton.onclick = function (e) {
-            confirmDialog("Download Result?").then(function(confirm){
-              if(confirm){
-                saveAsImage();
-              }
+            confirmDialog("Download Result?").then(function(confirmed){
+              if(confirmed){  saveAsImage(); }
             });
         };
 
@@ -265,22 +265,28 @@
         processPhoto();
       }
 
-      function clearRect(ctx, w, h){
-        ctx.fillStyle = "white";
-        ctx.clearRect(0,0,w,h);
+      function updateCanvasDimension(canvas, dimension){
+        canvas.width = dimension.width;
+        canvas.height = dimension.height;
+
+        const imageScale = parseInt(byId("image-scale").value);
+        dimension.width = dimension.width * (imageScale/100);
+        dimension.height = dimension.height * (imageScale/100);
+        return dimension;
       }
+
+      
 
       function drawUserPhoto() {
         //User Photo
         const img = new Image();
         img.onload = function () {
-          const dimension = caliberateImageSize(img);
-          console.debug("resized image dimension: ", dimension);
-          tempCanvas.width = dimension.width;
-          tempCanvas.height = dimension.height;
-          
-          clearRect(tempCtx, dimension.width, dimension.height);
-          tempCtx.drawImage(img, 0, 0, dimension.width, dimension.height);
+          const dimensionRaw = caliberateImageSize(img);
+          console.debug("resized image dimension: ", dimensionRaw);
+          const dimension = updateCanvasDimension(tempCanvas, dimensionRaw);
+
+          clearRect(tempCtx, dimensionRaw.width, dimensionRaw.height);
+          tempCtx.drawImage(img, 0, 0, dimensionRaw.width, dimensionRaw.height);
           
           const newImg = new Image();
           newImg.src = tempCanvas.toDataURL();
@@ -291,6 +297,7 @@
             const canvasX = 0, canvasY = 0;
 
             clearRect(ctx, WIDTH, HEIGHT);
+
             if(imageIsCentered && dimension.adjustedSide != null){
               if(dimension.adjustedSide == "w"){
                 imageX = (dimension.width - WIDTH)/2;
@@ -302,8 +309,6 @@
               imageX = byId("image-x").value;
               imageY = byId("image-y").value;
             }          
-            
-
             // The source newImg is taken from the coordinates (imageX, imageY), 
             // with a width of WIDTH and a height of HEIGHT. 
             // It is drawn to the canvas at (canvasX, canvasY),
@@ -351,8 +356,7 @@
         for (let i = 0; i < FRAME_IMAGES.length; i++) {
           const imageName = FRAME_IMAGES[i];
           const listItem = createHtmlTag({
-            tagName:'div',  class:'col-6 border rounded',
-             
+            tagName:'div', className:'col-6 border rounded',
             ch1:{
               tagName:'div',
               style:{'text-align':'center'},

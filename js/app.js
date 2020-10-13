@@ -17,6 +17,11 @@ function toBase64(fileInput, callback) {
     }
 }
 
+function clearRect(ctx, w, h){
+    ctx.fillStyle = "white";
+    ctx.clearRect(0,0,w,h);
+  }
+
 function toBase64v2(fileInput) {
     return new Promise(function(resolve, reject){
         try{
