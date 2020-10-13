@@ -48,6 +48,10 @@
         background-color: cornflowerblue;
         cursor: pointer;
       }
+
+      .field{
+        margin-top:5px
+      }
     </style>
   </head>
   <body>
@@ -70,7 +74,7 @@
                 <button id="btn-set-photo" class="btn btn-info">Choose</button>
               </div>
               <div class="field">
-                <p>Preview:</p>
+                <p>Preview: <span id="preview-photo-name"><code>NO PHOTO IS SELECTED PLEASE CHOOSE FILE</code></span></p>
                 <div class="preview-wrapper">
                   <img id="preview-photo" />
                 </div>
@@ -92,7 +96,7 @@
               <div class="preview-wrapper">
                 <div id="frame-list" class="freme-list row"></div>
               </div>
-              <p>Preview: <span id="preview-frame-name">NO FRAME IS SELECTED</span></p>
+              <p>Preview: <span id="preview-frame-name"><code>Belum ada frame yang dipilih, silakan pilih salah satu dari frame yang tersedia</code></span></p>
               <div class="preview-wrapper">
                 <img id="preview-frame" />
               </div>
@@ -199,6 +203,7 @@
         fillPreviewAttrs(previewPhoto);
 
         byId("btn-set-photo").onclick = function (e) {
+          byId("preview-photo-name").innerHTML = inputPhoto.files[0].name;
           toBase64v2(inputPhoto).then(function (result) {
             previewPhoto.src = result;
             photoImageData = result;
