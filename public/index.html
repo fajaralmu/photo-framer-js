@@ -32,7 +32,7 @@
   <body>
     <div class="container">
       <div class="header">
-        <h3>Photo Framer</h3>
+        <h3>Kafila Media Photo Framer</h3>
       </div>
       <div class="row">
         <div class="col-6">
@@ -85,64 +85,65 @@
             <div class="card-header">Preview Controller</div>
              <div class="card-body" >
               <div class="row">
-              <div class="field control-panel col-5"> 
-                <p></p>
-                <label style="text-align: center;">Text Property</label>
-                <p></p>
-                <label>Text</label>
-                <input type="text" value="Kafila Media" initialValue="Kafila Media" class="form-control" placeholder="Custom Text" id="custom-text" />
-                <span></span>
-                <label>Text X Position</label>
-                <input type="range" class="form-control text-modifier" min="0" max="1080"   initialValue="100" id="text-x" />
-                <spam id="out-text-x"></spam>
-                <label>Text Y Position</label>
-                <input type="range" class="form-control text-modifier" min="0" max="1080"  initialValue="100" id="text-y" />
-                 <spam id="out-text-y"></spam>
-                <label>Text Size</label>
-                <input type="range" class="form-control text-modifier" min="10" max="200" initialValue="50" id="text-size" />
-                <spam id="out-text-size"></spam>
-                <label>Text Color</label>
-                <input type="color" class="form-control text-modifier" initialValue="#cccccc"  id="text-color" />
-                <spam id="out-text-color"></spam>
-              </div>
-             <dov class="col-5"> 
-              <div class="field control-panel">
-                <p></p>
-                <label style="text-align: center;">Image Property</label>
-                <p></p>
-                <label>X Position</label>
-                <input type="range" class="form-control text-modifier" min="-1080" max="1080" value="0" initialValue="0"  id="image-x" />
-                <spam id="out-image-x"></spam>
-                <label>Y Position</label>
-                <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
-                <spam id="out-image-y"></spam>
-               
-              </div>
-              <button class="btn btn-secondary" onclick="setCenter()">Set Center</button>
-              <div>
-            </div>
-            </div>
-            
+                <div class="field control-panel col-5"> 
+                  <p></p>
+                  <label style="text-align: center;">Text Property</label>
+                  <p></p>
+                  <label>Text</label>
+                  <input type="text" value="Kafila Media" initialValue="Kafila Media" class="form-control" placeholder="Custom Text" id="custom-text" />
+                  <span></span>
+                  <label>Text X Position</label>
+                  <input type="range" class="form-control text-modifier" min="0" max="1080"   initialValue="100" id="text-x" />
+                  <spam id="out-text-x"></spam>
+                  <label>Text Y Position</label>
+                  <input type="range" class="form-control text-modifier" min="0" max="1080"  initialValue="100" id="text-y" />
+                  <spam id="out-text-y"></spam>
+                  <label>Text Size</label>
+                  <input type="range" class="form-control text-modifier" min="10" max="200" initialValue="50" id="text-size" />
+                  <spam id="out-text-size"></spam>
+                  <label>Text Color</label>
+                  <input type="color" class="form-control text-modifier" initialValue="#cccccc"  id="text-color" />
+                  <spam id="out-text-color"></spam>
+                </div>
+                <div class="col-5"> 
+                  <div class="field control-panel">
+                    <p></p>
+                    <label style="text-align: center;">Image Property</label>
+                    <p></p>
+                    <label>X Position</label>
+                    <input type="range" class="form-control text-modifier" min="-1080" max="1080" value="0" initialValue="0"  id="image-x" />
+                    <spam id="out-image-x"></spam>
+                    <label>Y Position</label>
+                    <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
+                    <spam id="out-image-y"></spam>
+                  </div>
+                  <button class="btn btn-secondary" onclick="setCenter()">Set Center</button>
+                </div>
+             </div>
           </div>
           <div class="card-footer">
             <button id="btn-process" class="btn btn-success">Process</button>
             <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
           </div>
         </div>
+      </div>
+      <div class="col-6">
+        <div class="card">
+          <div class="card-header">Result Preview</div>
+          <div class="card-body">  <img id="result-preview"  /> </div>
+          <div class="card-footer"> <p>Result Scale 1:4</p></div>
         </div>
-        <div class="col-6">
-          <div class="card">
-            <div class="card-header">Result Preview</div>
-            <div class="card-body">  <img id="result-preview"  /> </div>
-            <div class="card-footer"> <p>Result Scale 1:4</p></div>
-          </div>
-          <canvas style="display: none" id="canvas"></canvas>
-          <p></p>
-        </div>
-       
+        <canvas style="display: none" id="canvas"></canvas>
+        <p></p>
+      </div>
+      <div class="col-6"><!--Blank--></div>
+      <div class="col-12"><p align="center">Kafila Media 2020</p></div>
       <a style="display: none;" id="downloadLink"></a>
       <canvas id="temp-canvas" style="display: none;"></canvas>
     </div>
+
+   
+
     <script type="text/javascript">
       const inputFrame = byId("input-frame");
       const inputPhoto = byId("input-photo");
