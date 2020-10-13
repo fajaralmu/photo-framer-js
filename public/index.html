@@ -20,6 +20,13 @@
       .row {
         grid-row-gap: 10px;
       }
+
+      .preview-wrapper {
+        width: 100%;
+        height: 250;
+        overflow: scroll;
+        border: solid 2px #cccccc;
+      }
     </style>
   </head>
   <body>
@@ -43,7 +50,9 @@
               </div>
               <div class="field">
                 <p>Preview:</p>
-                <img id="preview-photo" />
+                <div class="preview-wrapper">
+                  <img id="preview-photo" />
+                </div>
               </div>
             </div>
           </div>
@@ -63,7 +72,9 @@
               </div>
               <div class="field">
                 <p>Preview:</p>
-                <img id="preview-frame" />
+                <div class="preview-wrapper">
+                  <img id="preview-frame" />
+                </div>
               </div>
             </div>
           </div>
