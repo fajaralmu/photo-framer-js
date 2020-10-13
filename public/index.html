@@ -75,16 +75,15 @@
               Choose Your Frame
             </div>
             <div class="card-body">
+              <p>Frame List:</p>
+              <div class="preview-wrapper">
+                <div id="frame-list" class="freme-list row"></div>
+              </div>
+              <p>Preview:</p>
+              <div class="preview-wrapper">
+                <img id="preview-frame" />
+              </div>
              
-              <div id="frame-list" class="freme-list row">
-
-              </div>
-              <div class="field">
-                <p>Preview:</p>
-                <div class="preview-wrapper">
-                  <img id="preview-frame" />
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -266,6 +265,11 @@
         processPhoto();
       }
 
+      function clearRect(ctx, w, h){
+        ctx.fillStyle = "white";
+        ctx.clearRect(0,0,w,h);
+      }
+
       function drawUserPhoto() {
         //User Photo
         const img = new Image();
@@ -274,8 +278,8 @@
           console.debug("resized image dimension: ", dimension);
           tempCanvas.width = dimension.width;
           tempCanvas.height = dimension.height;
-          tempCtx.fillStyle = "white";
-          tempCtx.clearRect(0,0,dimension.width, dimension.height);
+          
+          clearRect(tempCtx, dimension.width, dimension.height);
           tempCtx.drawImage(img, 0, 0, dimension.width, dimension.height);
           
           const newImg = new Image();
@@ -286,8 +290,7 @@
             var imageX = 0, imageY = 0;
             const canvasX = 0, canvasY = 0;
 
-            ctx.fillStyle="white";
-            ctx.clearRect(0,0,WIDTH,HEIGHT);
+            clearRect(ctx, WIDTH, HEIGHT);
             if(imageIsCentered && dimension.adjustedSide != null){
               if(dimension.adjustedSide == "w"){
                 imageX = (dimension.width - WIDTH)/2;
@@ -310,7 +313,6 @@
             drawFrame();
             imageIsCentered = false;
           }
-          
         };
         img.src = photoImageData;
       }
@@ -334,7 +336,6 @@
       }
 
       function setText() {
-       
         return true; 
       }
 
@@ -350,29 +351,25 @@
         for (let i = 0; i < FRAME_IMAGES.length; i++) {
           const imageName = FRAME_IMAGES[i];
           const listItem = createHtmlTag({
-            tagName:'div',
-            class:'col-6',
+            tagName:'div',  class:'col-6 border rounded',
+             
             ch1:{
               tagName:'div',
+              style:{'text-align':'center'},
               ch1:{
-                tagName:'input',
-                name:'photo-frame',
-                type:'radio',
-                className:'form-control',
-                id: imageName,
-                onchange: function(e){
-                  frameOptionOnChange(e.target);
-                 
-                }
+                tagName:'input', name:'photo-frame',
+                type:'radio',  className:'form-control',  id: imageName,
+                onchange: function(e){ frameOptionOnChange(e.target);  },
               },
               ch2: {
-                id: 'img-'+imageName,
-                tagName:'img',
+                id: 'img-'+imageName, tagName:'img',
                 src:'../assets/templates/'+imageName,
-                alt: imageName,
-                width: 100,
-                height: 100,
+                alt: imageName,  width: 150, height: 150,
                 style: { border:'solid 2px #cccccc'  }
+              },
+              ch3: {
+                tagName: 'label',
+                innerHTML: imageName
               }
             }
           });
