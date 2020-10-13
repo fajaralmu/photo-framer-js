@@ -76,6 +76,10 @@
                 </div>
               </div>
             </div>
+            <div class="card-footer">
+              <button id="btn-process" class="btn btn-success">Process</button>
+              <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
+            </div>
           </div>
         </div>
         <div class="col-6">
@@ -88,7 +92,7 @@
               <div class="preview-wrapper">
                 <div id="frame-list" class="freme-list row"></div>
               </div>
-              <p>Preview:</p>
+              <p>Preview: <span id="preview-frame-name">NO FRAME IS SELECTED</span></p>
               <div class="preview-wrapper">
                 <img id="preview-frame" />
               </div>
@@ -141,10 +145,7 @@
                 </div>
              <!-- </div> -->
           </div>
-          <div class="card-footer">
-            <button id="btn-process" class="btn btn-success">Process</button>
-            <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
-          </div>
+         
         </div>
       </div>
       <div class="col-6">
@@ -374,24 +375,19 @@
             ch1:{
               tagName:'div', className:'clickable',
               style:{'text-align':'center'},
+              id: imageName,
               onclick: function(e){
-                byId(imageName).checked = true;
-                frameOptionOnChange(byId(imageName));
-              },
-              ch1:{
-                tagName:'input', name:'photo-frame',
-                type:'radio',  className:'form-control',  id: imageName,
-                onchange: function(e){ frameOptionOnChange(e.target);  },
-              },
-              ch2: {
+                frameOptionOnChange(imageName);
+              }, 
+              ch1: {
                 id: 'img-'+imageName, tagName:'img',
                 src:'../assets/templates/'+imageName,
-                alt: imageName,  width: 150, height: 150,
-                style: { border:'solid 2px #cccccc'  }
+                alt: imageName,   
+                class:"img-thumbnail",
               },
-              ch3: {
+              ch2: {
                 tagName: 'label',
-                innerHTML: imageName
+                innerHTML: "Option "+(i+1)
               }
             }
           });
@@ -399,12 +395,11 @@
         }
       }
 
-      function frameOptionOnChange(input){
-        const imageName = input.id;
+      function frameOptionOnChange(imageName){ 
         const img = byId('img-'+imageName);
         const tempImage = new Image();
         tempImage.src = img.src;
-        
+        byId("preview-frame-name").innerHTML = imageName;
         tempImage.onload = function(e){
           tempFrameCanvas.width = tempImage.width;
           tempFrameCanvas.height = tempImage.height;
