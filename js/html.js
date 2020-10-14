@@ -51,6 +51,11 @@ function createHtmlTag(object){
 			}else{ // Html DOM
 			//	console.debug("will create HTML DOM of :", key);
 				const htmlObject = value;
+
+				if(key.startsWith("tag_")){
+					htmlObject.tagName = key.replace("tag_", "");
+				}
+
 				const htmlTag = createHtmlTag(htmlObject);
 				tag.appendChild(htmlTag);
 			}

@@ -155,10 +155,10 @@
                     <p></p>
                     <label style="text-align: center;">Ukuran dan Posisi Gambar</label>
                     <p></p>
-                    <label>Posisi Vertikal</label>
+                    <label>Posisi Horizontal</label>
                     <input type="range" class="form-control text-modifier" min="-1080" max="1080" value="0" initialValue="0"  id="image-x" />
                     <spam id="out-image-x"></spam>
-                    <label>Posisi Horizontal</label>
+                    <label>Posisi Vertikal</label>
                     <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
                     <spam id="out-image-y"></spam>
                     <label>Zoom In/Zoom Out</label>
@@ -245,7 +245,7 @@
 
         initCanvasSize();
         initTextModifiersEvents();
-        setText();
+        // setText();
         populateFrameCategoriesMenu().then(function(index){
           displayFrameLists(index);
         });
@@ -257,9 +257,7 @@
           for (let i = 0; i < GROUPED_FRAME_IMAGES.length; i++) {
             const frameCategory = GROUPED_FRAME_IMAGES[i];
             const option = createHtmlTag({
-              tagName:'option',
-              value:i,
-              innerHTML:frameCategory.label
+              tagName:'option', value:i,  innerHTML:frameCategory.label
             });
             selectFrameCategory.appendChild(option);
           }
@@ -344,13 +342,16 @@
               const canvasX = 0, canvasY = 0;
 
               clearRect(ctx, WIDTH, HEIGHT);
+              console.debug("imageIsCentered && dimension.adjustedSide: ", imageIsCentered , dimension.adjustedSide);
+              if(imageIsCentered ){
 
-              if(imageIsCentered && dimension.adjustedSide != null){
-
-                if(dimension.adjustedSide == "w"){
+                if( dimension.adjustedSide != null && dimension.adjustedSide == "w"){
                   imageX = ( dimension.width - WIDTH)/2;
-                }else {
+                }else if( dimension.adjustedSide != null && dimension.adjustedSide == "h"){
                   imageY = (dimension.height - HEIGHT)/2;
+                }else {
+                  imageX = 0;
+                  imageY = 0;
                 }
                 updateImageInputRange(imageX, imageY);
               } else {
@@ -428,21 +429,20 @@
           const imageName = FRAME_IMAGES[i];
           const listItem = createHtmlTag({
             tagName:'div', className:'col-6 border rounded',
-            ch1:{
-              tagName:'div', className:'clickable',
+            tag_div:{
+              className:'clickable',
               style:{'text-align':'center'},
               id: imageName,
               onclick: function(e){
                 frameOptionOnChange(imageName);
               }, 
-              ch1: {
-                id: 'img-'+imageName, tagName:'img',
+              tag_img: {
+                id: 'img-'+imageName,
                 src:'../assets/templates/'+imageName,
                 alt: imageName,   
                 class:"img-thumbnail",
               },
-              ch2: {
-                tagName: 'label',
+              tag_label: {
                 innerHTML: "Option "+(i+1)
               }
             }
@@ -456,11 +456,15 @@
         const tempImage = new Image();
         tempImage.src = img.src;
         byId("preview-frame-name").innerHTML = imageName;
+        
         tempImage.onload = function(e){
+
           tempFrameCanvas.width = tempImage.width;
           tempFrameCanvas.height = tempImage.height;
+
           tempFrameCtx.drawImage(tempImage,0,0,WIDTH,HEIGHT);
           frameImageData = tempFrameCanvas.toDataURL();
+
           console.debug(imageName," Frame size: ", tempImage.width,"x", tempImage.height);
         }
         previewFrame.src = img.src; 
