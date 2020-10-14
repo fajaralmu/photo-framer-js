@@ -429,20 +429,23 @@
           const imageName = FRAME_IMAGES[i];
           const listItem = createHtmlTag({
             tagName:'div', className:'col-6 border rounded',
-            tag_div:{
+            ch1:{
+              tagName:'div',
               className:'clickable',
               style:{'text-align':'center'},
               id: imageName,
               onclick: function(e){
                 frameOptionOnChange(imageName);
               }, 
-              tag_img: {
+              ch0: {
+                tagName:'img',
                 id: 'img-'+imageName,
                 src:'../assets/templates/'+imageName,
                 alt: imageName,   
                 class:"img-thumbnail",
               },
-              tag_label: {
+              ch1: {
+                tagName:'label',
                 innerHTML: "Option "+(i+1)
               }
             }
