@@ -75,13 +75,14 @@
             <div class="card-body">
               <div class="field grid2">
                 <label>Select File</label>
-                <input id="input-photo" class="form-control" type="file" />
-              </div>
+                <div class = "row">
+                  <input id="input-photo" class="form-control col-8" type="file" />
+                  <button id="btn-set-photo" class="btn btn-info col-4">Proses</button>
+                </div>
+               
+              </div> 
               <div class="field">
-                <button id="btn-set-photo" class="btn btn-info">Proses</button>
-              </div>
-              <div class="field">
-                <p>Preview: <span id="preview-photo-name"><code>Tidak ada foto yang dipilih, silakan pilih terlebih dahulu</code></span></p>
+                <p>Preview: <span id="preview-photo-name"><code>Tidak ada foto</code></span></p>
                 <div class="preview-wrapper">
                   <img id="preview-photo" />
                 </div>
@@ -93,7 +94,7 @@
                   <li>Pilih frame</li>
                   <li>Tekan tombol 'Tampilkan Hasil'</li>
                   <li>Atur posisi dan ukuran gambar jika memungkinkan</li>
-                  <li>Unduh Gambar</li>
+                  <li>Download Gambar</li>
                 </ol>
               </div>
             </div>
@@ -126,7 +127,7 @@
 
         <div class="col-6">
           <div class="card">
-            <div class="card-header">Preview Controller</div>
+            <div class="card-header">Setting</div>
              <div class="card-body" >
               <div class="row_">
                 <!--<div class="field control-panel col-5"> 
