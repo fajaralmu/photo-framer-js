@@ -19,8 +19,42 @@
     <script src="../js/html.js"></script>
     <script src="../js/dialogs.js"></script>
     <script type="text/javascript">
-        const FRAME_IMAGES = ["D2 _PROUD_ALUMNUS.png", "D2_PROUD_STUDENT.png", "D2_PROUD_TEACHER.png", "D2_READY_PART.png",
-            "PROUD_ALUMNUS.png", "PROUD_PART.png", "PROUD_STUDENT.png", "PROUD_TEACHER.png", "READY_PART.png"];
+        const GROUPED_FRAME_IMAGES = [
+          {
+            id:"student",
+            label:"Santri",
+            images: [
+                "PROUD_STUDENT.png",
+                "D2_PROUD_STUDENT.png"
+            ]
+          },
+          {
+            id:"teacher",
+            label:"Asatidzah",
+            images:[
+              "PROUD_TEACHER.png",
+              "D2_PROUD_TEACHER.png"
+            ]
+          },
+          {
+            id:"alumnus",
+            label:"Alumni",
+            images:[
+              "D2 _PROUD_ALUMNUS.png",
+              "PROUD_ALUMNUS.png"
+            ]
+          },
+          {
+            id:"other",
+            label:"Wali Santri/Calon Santri",
+            images:[
+              "PROUD_PART.png",
+              "D2_READY_PART.png",
+              "READY_PART.png"
+            ]
+          },
+        ]
+       // const FRAME_IMAGES = GROUPED_FRAME_IMAGES[0].images
         const WIDTH = 1080;
         const HEIGHT = 1080;
         const BG_COLOR = "#FFFFFF";
@@ -36,7 +70,7 @@
         <div class="col-6">
           <div class="card">
             <div class="card-header">
-              Choose Your Photo
+              Pilih Foto
             </div>
             <div class="card-body">
               <div class="field grid2">
@@ -44,27 +78,40 @@
                 <input id="input-photo" class="form-control" type="file" />
               </div>
               <div class="field">
-                <button id="btn-set-photo" class="btn btn-info">Choose</button>
+                <button id="btn-set-photo" class="btn btn-info">Proses</button>
               </div>
               <div class="field">
-                <p>Preview: <span id="preview-photo-name"><code>NO PHOTO IS SELECTED PLEASE CHOOSE FILE</code></span></p>
+                <p>Preview: <span id="preview-photo-name"><code>Tidak ada foto yang dipilih, silakan pilih terlebih dahulu</code></span></p>
                 <div class="preview-wrapper">
                   <img id="preview-photo" />
                 </div>
               </div>
+              <div>
+                <h3>Panduan</h3>
+                <ol>
+                  <li>Pilih foto</li>
+                  <li>Pilih frame</li>
+                  <li>Tekan tombol 'Tampilkan Hasil'</li>
+                  <li>Atur posisi dan ukuran gambar jika memungkinkan</li>
+                  <li>Unduh Gambar</li>
+                </ol>
+              </div>
             </div>
             <div class="card-footer">
-              <button id="btn-process" class="btn btn-success">Process</button>
-              <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download as image</button>
+              <button id="btn-process" class="btn btn-success">Tempilkan Hasil</button>
+              <button style="color:white" class="btn btn-secondary" id="downloadButton"  >Download</button>
             </div>
           </div>
         </div>
         <div class="col-6">
           <div class="card">
             <div class="card-header">
-              Choose Your Frame
+              Pilih Frame
             </div>
             <div class="card-body">
+              <p>Kategori:</p>
+              <select class="form-control" id="frame-category"></select>
+              <!-- list of frames -->
               <p>Frame List:</p>
               <div class="preview-wrapper">
                 <div id="frame-list" class="freme-list row"></div>
@@ -105,19 +152,19 @@
                 <!-- <div class="col-5">  -->
                   <div class="field control-panel">
                     <p></p>
-                    <label style="text-align: center;">Image Property</label>
+                    <label style="text-align: center;">Ukuran dan Posisi Gambar</label>
                     <p></p>
-                    <label>X Position</label>
+                    <label>Posisi Vertikal</label>
                     <input type="range" class="form-control text-modifier" min="-1080" max="1080" value="0" initialValue="0"  id="image-x" />
                     <spam id="out-image-x"></spam>
-                    <label>Y Position</label>
+                    <label>Posisi Horizontal</label>
                     <input type="range" class="form-control text-modifier" min="-1080" max="1080"  value="0"  initialValue="0" id="image-y" />
                     <spam id="out-image-y"></spam>
-                    <label>Image Scale</label>
+                    <label>Zoom In/Zoom Out</label>
                     <input type="range" class="form-control text-modifier" min="0" max="200"  value="100"  initialValue="100" id="image-scale" />
                     <label><spam id="out-image-scale"></spam>%</label>
                   </div>
-                  <button class="btn btn-secondary" onclick="setCenter()">Reset Position</button>
+                  <button class="btn btn-secondary" onclick="setCenter()">Reset Posisi</button>
                 </div>
              <!-- </div> -->
           </div>
@@ -148,6 +195,8 @@
       const previewPhoto = byId("preview-photo");
       const previewFrame = byId("preview-frame");
       const resultPreview = byId("result-preview");
+
+      const selectFrameCategory= byId("frame-category");
      
       const inputText = byId("custom-text");
       const textModifiers = document.getElementsByClassName("text-modifier");
@@ -196,7 +245,29 @@
         initCanvasSize();
         initTextModifiersEvents();
         setText();
-        displayFrameLists();
+        populateFrameCategoriesMenu().then(function(index){
+          displayFrameLists(index);
+        });
+      }
+
+      function populateFrameCategoriesMenu(){
+        return new Promise(function(resolve, reject){
+          selectFrameCategory.innerHTML = "";
+          for (let i = 0; i < GROUPED_FRAME_IMAGES.length; i++) {
+            const frameCategory = GROUPED_FRAME_IMAGES[i];
+            const option = createHtmlTag({
+              tagName:'option',
+              value:i,
+              innerHTML:frameCategory.label
+            });
+            selectFrameCategory.appendChild(option);
+          }
+          selectFrameCategory.onchange = function(e){
+            displayFrameLists(e.target.selectedOptions[0].value);
+          }
+
+          resolve(0);
+        });
       }
 
       function initCanvasSize(){
@@ -349,8 +420,9 @@
         imgElement.src = "#";
       }
 
-      function displayFrameLists(){
+      function displayFrameLists(frameCategoryIndex){
         frameList.innerHTML = "";
+        var FRAME_IMAGES = GROUPED_FRAME_IMAGES[frameCategoryIndex].images;
         for (let i = 0; i < FRAME_IMAGES.length; i++) {
           const imageName = FRAME_IMAGES[i];
           const listItem = createHtmlTag({
