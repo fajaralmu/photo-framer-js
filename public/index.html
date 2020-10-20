@@ -25,7 +25,7 @@
             label: "Hari Santri",
             images: [
               "twibbon-hari-santri-option-1.png",
-              "twibbon-hari-santri-option-2.png"
+              "twibbon-hari-santri-option-2.png", 
             ]
           },
           {
@@ -450,10 +450,14 @@
                 style:{'background-color':'#cccccc'},
                 alt: imageName,   
                 class:"img-thumbnail",
+                onload: function(e){
+                  byId("label-option-"+i).innerHTML = "Option "+(i+1)
+                }
               },
               ch1: {
+                id:"label-option-"+i,
                 tagName:'label',
-                innerHTML: "Option "+(i+1)
+                innerHTML: "Loading..."
               }
             }
           });
