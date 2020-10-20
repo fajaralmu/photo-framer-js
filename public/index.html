@@ -21,6 +21,13 @@
     <script type="text/javascript">
         const GROUPED_FRAME_IMAGES = [
           {
+            id: "hari_santri",
+            label: "Hari Santri",
+            images: [
+              "twibbon-hari-santri-updated.png"
+            ]
+          },
+          {
             id:"student",
             label:"Santri",
             images: [
@@ -45,7 +52,7 @@
             ]
           },
           {
-            id:"other",
+            id:"partOf",
             label:"Wali Santri/Calon Santri",
             images:[
               "READY-TO-BE-PART-OF-1.png",
@@ -62,8 +69,19 @@
   </head>
   <body>
     <div class="container">
-      <div class="header">
+      
+      <div class="header" style="text-align: center;">
         <h3>Kafila Media Photo Framer</h3>
+      </div>
+      <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading" >Panduan</h4>
+        <ol>
+          <li>Pilih foto</li>
+          <li>Pilih frame</li>
+          <li>Tekan tombol 'Tampilkan Hasil'</li>
+          <li>Atur posisi dan ukuran gambar jika memungkinkan</li>
+          <li>Download Gambar</li>
+        </ol>
       </div>
       <div class="row">
         <div class="col-6">
@@ -86,16 +104,7 @@
                   <img id="preview-photo" />
                 </div>
               </div>
-              <div>
-                <h3>Panduan</h3>
-                <ol>
-                  <li>Pilih foto</li>
-                  <li>Pilih frame</li>
-                  <li>Tekan tombol 'Tampilkan Hasil'</li>
-                  <li>Atur posisi dan ukuran gambar jika memungkinkan</li>
-                  <li>Download Gambar</li>
-                </ol>
-              </div>
+              
             </div>
             <div class="card-footer">
               <button id="btn-process" class="btn btn-success">Tempilkan Hasil</button>
@@ -116,8 +125,8 @@
               <div class="preview-wrapper">
                 <div id="frame-list" class="freme-list row"></div>
               </div>
-              <p>Preview: <span id="preview-frame-name"><code>Belum ada frame yang dipilih, silakan pilih salah satu dari frame yang tersedia</code></span></p>
-              <div class="preview-wrapper">
+              <p>Selected: <span id="preview-frame-name"><code>Belum ada frame yang dipilih, silakan pilih salah satu dari frame yang tersedia</code></span></p>
+              <div class="preview-wrapper" style="display: none;">
                 <img id="preview-frame" />
               </div>
             </div>
@@ -186,8 +195,6 @@
       <canvas id="temp-canvas" style="display: none;"></canvas>
       <canvas id="temp-frame-canvas" style="display: none;"></canvas>
     </div>
-
-   
 
     <script type="text/javascript">
      // const inputFrame = byId("input-frame");
@@ -336,7 +343,7 @@
             const newImg = new Image();
             newImg.src = tempCanvas.toDataURL();
             newImg.onload = function(){
-             // console.debug("IMG SIZE: ", newImg.width ,"x", newImg.height);
+              // console.debug("IMG SIZE: ", newImg.width ,"x", newImg.height);
               var imageX = 0, imageY = 0;
               const canvasX = 0, canvasY = 0;
 
@@ -434,7 +441,7 @@
               style:{'text-align':'center'},
               id: imageName,
               onclick: function(e){
-                frameOptionOnChange(imageName);
+                frameOptionOnChange((i+1), imageName);
               }, 
               ch0: {
                 tagName:'img',
@@ -453,11 +460,11 @@
         }
       }
 
-      function frameOptionOnChange(imageName){ 
+      function frameOptionOnChange(index, imageName){ 
         const img = byId('img-'+imageName);
         const tempImage = new Image();
         tempImage.src = img.src;
-        byId("preview-frame-name").innerHTML = imageName;
+        byId("preview-frame-name").innerHTML = "Option "+index+" ("+ imageName +")";
         
         tempImage.onload = function(e){
 
