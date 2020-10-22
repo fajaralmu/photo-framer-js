@@ -322,11 +322,8 @@
           
           downloadLink.click();
         }catch(e){
-          
-          console.debug("Error perfornming download image.. ",e, " try download method");
-          const blob = canvas.msToBlob();
-          navigator.msSaveBlob(blob, name);
-           
+          console.warn(e);
+          alert("Mohon Maaf Download Gagal. Silakan simpan gambar secara manual pada bagian preview"); 
           
         }
       }
