@@ -315,18 +315,19 @@
 
       function saveAsImage() {
         const data = canvas.toDataURL("image/png");
+        const fileName = "KafilaFrameResult_"+(new Date()).toISOString()+".png";
         downloadLink.href = data;
-        downloadLink.download = "KafilaFrameResult_"+(new Date()).toISOString()+".png";
+        downloadLink.download = fileName;
         try{
+          
           downloadLink.click();
         }catch(e){
-          console.debug("Error click: ", e);
-          downloadLink.style.display = 'block';
-          downloadLink.styte.fontSize = '2em';
-          downloadLink.innerHTML = 'CLICK TO DOWNLOAD';
-          downloadLink.onclick = function(e){
-            e.target.style.display = 'none';
-          }
+          
+          console.debug("Error perfornming download image.. ",e, " try download method");
+          const blob = canvas.msToBlob();
+          navigator.msSaveBlob(blob, name);
+           
+          
         }
       }
 
