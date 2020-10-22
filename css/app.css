@@ -10,7 +10,7 @@
 
   .preview-wrapper {
     width: 100%;
-    height: 330;
+    height: 330px;
     overflow: scroll;
     border: solid 2px #cccccc;
   }

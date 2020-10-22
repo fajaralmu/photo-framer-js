@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html><html>
   <head>
     <meta charset="utf-8" />
     <meta name="description" content="Kafila Media PSB Frame">
@@ -10,6 +10,7 @@
     <meta property="og:type" content="website" >
 
     <title>Kafila Media PSB Frame</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css" />
     <link rel="stylesheet" href="../css/app.css" />
     <script src="../js/jquery-3.3.1.slim.min.js"></script>
@@ -195,7 +196,7 @@
       <canvas id="temp-canvas" style="display: none;"></canvas>
       <canvas id="temp-frame-canvas" style="display: none;"></canvas>
     </div>
-
+  
     <script type="text/javascript">
      // const inputFrame = byId("input-frame");
       const inputPhoto = byId("input-photo");
@@ -253,6 +254,7 @@
         initTextModifiersEvents();
         // setText();
         populateFrameCategoriesMenu().then(function(index){
+          
           displayFrameLists(index);
         });
       }
@@ -268,9 +270,17 @@
             selectFrameCategory.appendChild(option);
           }
           selectFrameCategory.onchange = function(e){
-            displayFrameLists(e.target.selectedOptions[0].value);
+            const selectElement = e.target;
+            if(selectElement.selectedOptions){
+              displayFrameLists(selectElement.selectedOptions[0].value);
+            } else if(selectElement.options[selectElement.selectedIndex]){
+              displayFrameLists(selectElement.options[selectElement.selectedIndex].value);
+            }else{
+              console.debug("Error change frame list");
+            }
+           
           }
-
+          console.debug("end populateFrameCategoriesMenu");
           resolve(0);
         });
       }
@@ -284,6 +294,8 @@
 
         resultPreview.width = WIDTH/SCALE;
         resultPreview.height = HEIGHT/SCALE;
+
+        console.debug("canvas size initialized");
       }
 
       function initTextModifiersEvents(){
@@ -306,7 +318,17 @@
         const data = canvas.toDataURL("image/png");
         downloadLink.href = data;
         downloadLink.download = "KafilaFrameResult_"+(new Date()).toISOString()+".png";
-        downloadLink.click();
+        try{
+          downloadLink.click();
+        }catch(e){
+          console.debug("Error click: ", e);
+          downloadLink.style.display = 'block';
+          downloadLink.styte.fontSize = '2em';
+          downloadLink.innerHTML = 'CLICK TO DOWNLOAD';
+          downloadLink.onclick = function(e){
+            e.target.style.display = 'none';
+          }
+        }
       }
 
       function processPhoto() {
@@ -368,8 +390,11 @@
               // with a width of WIDTH and a height of HEIGHT. 
               // It is drawn to the canvas at (canvasX, canvasY),
               // where it is given a width of WIDTH and a height of HEIGHT.
-              ctx.drawImage(newImg, imageX, imageY, WIDTH, HEIGHT, canvasX, canvasY, WIDTH, HEIGHT);
-
+              try{
+                ctx.drawImage(newImg, imageX, imageY, WIDTH, HEIGHT, canvasX, canvasY, WIDTH, HEIGHT);
+              }catch(e){
+                console.debug("Error drawing: ", e);
+              }
               resolve();
             }
           };
@@ -431,8 +456,10 @@
       function displayFrameLists(frameCategoryIndex){
         frameList.innerHTML = "";
         var FRAME_IMAGES = GROUPED_FRAME_IMAGES[frameCategoryIndex].images;
+        
         for (let i = 0; i < FRAME_IMAGES.length; i++) {
           const imageName = FRAME_IMAGES[i];
+          const index = i;
           const listItem = createHtmlTag({
             tagName:'div', className:'col-6 border rounded',
             ch1:{
@@ -441,7 +468,7 @@
               style:{'text-align':'center'},
               id: imageName,
               onclick: function(e){
-                frameOptionOnChange((i+1), imageName);
+                frameOptionOnChange((index+1), imageName);
               }, 
               ch0: {
                 tagName:'img',
@@ -451,16 +478,18 @@
                 alt: imageName,   
                 class:"img-thumbnail",
                 onload: function(e){
-                  byId("label-option-"+i).innerHTML = "Option "+(i+1)
+                   
+                  byId("label-option-"+index).innerHTML = "Option "+(index+1)
                 }
               },
               ch1: {
-                id:"label-option-"+i,
+                id:"label-option-"+index,
                 tagName:'label',
                 innerHTML: "Loading..."
               }
             }
           });
+         
           frameList.appendChild(listItem);
         }
       }
@@ -494,5 +523,6 @@
 
       init();
     </script>
-  </body>
+
+</body>
 </html>

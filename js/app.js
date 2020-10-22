@@ -11,8 +11,8 @@ function toBase64(fileInput, callback) {
      
     const reader = new FileReader();
     reader.readAsDataURL(fileInput.files[0]);
-    reader.onload = () => callback(reader.result);
-    reader.onerror = error => {
+    reader.onload = function()  { callback(reader.result); }
+    reader.onerror = function(error) {
         alert("Error Loading File");
     }
 }
@@ -27,8 +27,8 @@ function toBase64v2(fileInput) {
         try{
             const reader = new FileReader();
             reader.readAsDataURL(fileInput.files[0]);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => {
+            reader.onload = function() { resolve(reader.result); }
+            reader.onerror = function(error) {
                 reject(error);
             }
         }catch(e){
@@ -46,8 +46,8 @@ function toBase64v2(fileInput) {
 function toBase64Multiple(file, callback) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => callback(reader.result);
-    reader.onerror = error => {
+    reader.onload = function() { callback(reader.result); }
+    reader.onerror = function(error) {
         alert("Error Loading File");
     }
 }

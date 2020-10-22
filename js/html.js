@@ -52,7 +52,7 @@ function createHtmlTag(object){
 			//	console.debug("will create HTML DOM of :", key);
 				const htmlObject = value;
 
-				if(key.startsWith("tag_")){
+				if(key.indexOf("tag_") == 0){ //starts with
 					htmlObject.tagName = key.replace("tag_", "");
 				}
 

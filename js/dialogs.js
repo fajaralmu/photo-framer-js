@@ -41,8 +41,9 @@ function confirmDialog(msg, prop) {
 						ch3 : {
 							tagName : 'div',
 							className : 'modal-footer',
-							ch1 : {
-								style : { margin : 'auto', style:{width:'max-content'} },
+							// ch1 : {
+							// 	tagName:'div',
+							// 	style : { margin : 'auto', width:'max-content'  },
 								ch1:{
 									tagName : 'button',
 									innerHTML : property.yesHtml,
@@ -62,15 +63,23 @@ function confirmDialog(msg, prop) {
 										resolve(false);
 										dialog.parentNode.removeChild(dialog);
 									}
-								},
+								// },
 							}
 						}
 					}
 				},
 			}
 		})
-
-		document.body.prepend(dialog);
+		try{
+			document.body.prepend(dialog);
+		}catch(e){ 
+			try{
+				document.body.insertBefore(dialog, document.body.childNodes[0]);
+			}catch(e){
+				console.debug("force accept");
+				resolve(true);
+			}
+		}
 	});
 }
 
@@ -145,7 +154,16 @@ function promptDialog(msg, inputType) {
 			}
 		})
 
-		document.body.prepend(dialog);
+		try{
+			document.body.prepend(dialog);
+		}catch(e){ 
+			try{
+				document.body.insertBefore(dialog, document.body.childNodes[0]);
+			}catch(e){
+				console.debug("force accept");
+				resolve(true);
+			}
+		}
 	});
 }
 
@@ -190,7 +208,16 @@ function infoDialog(msg) {
 			}
 		})
 
-		document.body.prepend(dialog);
+		try{
+			document.body.prepend(dialog);
+		}catch(e){ 
+			try{
+				document.body.insertBefore(dialog, document.body.childNodes[0]);
+			}catch(e){
+				console.debug("force accept");
+				resolve(true);
+			}
+		}
 	});
 }
 
