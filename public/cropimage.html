@@ -66,7 +66,7 @@
             <output id="output-x" ></output>
         
             <p>Y Position</p> 
-            <input id="rangeY" type="range" value="0"  max="400" min="-400" autocomplete="off" />
+            <input id="rangeY" type="range" value="0" max="400" min="0" autocomplete="off" />
             <output id="output-y"  ></output>
 
             <p>Clip Size</p> 
@@ -103,6 +103,8 @@
         imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
         // rangeY.max = canvas.height;
         rangeX.max = canvas.width;
+        rangeY.max = canvas.height;
+        rangeY.value = canvas.height;
       };
     }
 
@@ -137,12 +139,14 @@
         clipX = -x;
         imageClip.style.marginLeft = x + 'px';
         updateBackgroundPosition();
+        byId("output-x").innerHTML = clipX;
     }
 
     function updateClipY(y){
-        clipY = -y;
-        imageClip.style.marginTop =  ( y - 9)+'px';
+        clipY = y;
+        imageClip.style.marginTop =  ( -y-9)+'px';
         updateBackgroundPosition();
+        byId("output-y").innerHTML = y;
     }
 
     function updateClipSize(size){
@@ -154,8 +158,8 @@
         imageClip.style.width = clipSize+'px';
         imageClip.style.height = clipSize+'px';
         imageClip.style.backgroundPosition = clipX+"px "+(clipY-canvas.height)+"px";
-        byId("output-x").innerHTML = clipX;
-        byId("output-y").innerHTML = clipY;
+        
+       
         byId("output-clip-size").innerHTML = clipSize + " BG POS "+ imageClip.style.backgroundPosition;
     }
 
