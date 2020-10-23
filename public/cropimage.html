@@ -69,7 +69,7 @@
 
     function setBackground() {
 
-       // return new Promise(function(res, rej){
+       return new Promise(function(res, rej){
             const img = new Image();
             img.src = IMAGE_URL;
             img.onload = function () {
@@ -86,12 +86,13 @@
                 rangeX.max = canvas.width;
                 rangeY.max = canvas.height;
                 rangeY.value = canvas.height;
-            //    res(0);
+                clipY = rangeY.value;
+               res(0);
             };
             img.onerror = function(e){
-            //    rej(e);
+               rej(e);
             }
-       // })
+       });
       
     }
 
@@ -145,12 +146,11 @@
         imageClip.style.width = clipSize+'px';
         imageClip.style.height = clipSize+'px';
         imageClip.style.backgroundPosition = clipX+"px "+(clipY-canvas.height)+"px";
-        
        
         byId("output-clip-size").innerHTML = clipSize + " BG POS "+ imageClip.style.backgroundPosition;
     }
 
-    function initEvents(){
+    function initEventsAndProperties(){
         imageClip.style.backgroundImage = 'url('+IMAGE_URL+')';
         canvas.width = BASE_WIDTH;
         canvas.height = BASE_HEIGHT;
@@ -167,12 +167,13 @@
         }
     }
 
-    setBackground()//.then(function(){
+    initEventsAndProperties();
+    setBackground().then(function(){
         console.debug("background set");
-        initEvents();
+        
         updateBackgroundPosition();
        
-  //  }).catch(function(){});
+   }).catch(function(){});
     window.onmousemove = mouseListener;
     
   </script>
