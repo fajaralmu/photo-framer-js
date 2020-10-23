@@ -107,16 +107,12 @@
     }
 
     function updateClipX(x){
-        clipX = -x;
-        rangeX.value = x; 
-        byId("output-x").innerHTML = x;
+       
         updateClipXY(x, clipY);
     }
 
     function updateClipY(y){
-        clipY = y;
-        rangeY.value = y; 
-        byId("output-y").innerHTML = y;
+        
         updateClipXY(clipX, y);
     }
 
@@ -126,8 +122,13 @@
     }
 
     function updateClipXY(x, y){
-        updateClipX(x);
-        updateClipY(y);
+        clipX = -x;
+        rangeX.value = x; 
+        byId("output-x").innerHTML = x;
+
+        clipY = y;
+        rangeY.value = y; 
+        byId("output-y").innerHTML = y; 
         updateBackgroundPosition();
     }
 
