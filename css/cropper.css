@@ -1,0 +1,23 @@
+#main-canvas {
+    border: solid 2px #cccccc;
+    position: relative;
+  }
+  .container {
+    margin: auto;
+    padding: 10px;
+     /* text-align: center; */
+  }
+
+  #image-clip{
+      margin:auto; 
+      border:solid 2px #cccccc; 
+      position: absolute;
+      background-repeat: no-repeat;
+      transition-duration: 200ms;
+  }
+  #image-clip:hover{
+      cursor: pointer; 
+  }
+  #controls{
+      text-align: left;
+  }

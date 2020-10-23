@@ -17,36 +17,14 @@
     <title>Image Cropper</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="../css/cropper.css" />
     <script src="../js/jquery-3.3.1.slim.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/app.js"></script>
     <script src="../js/html.js"></script>
     <script src="../js/dialogs.js"></script>
-
-    <style>
-      #main-canvas {
-        border: solid 2px #cccccc;
-        position: relative;
-      }
-      .container {
-        margin: auto;
-        padding: 10px;
-         /* text-align: center; */
-      }
-
-      #image-clip{
-          margin:auto; 
-          border:solid 2px #cccccc; 
-          position: absolute;
-          background-repeat: no-repeat;
-          transition-duration: 200ms;
-      }
-      #controls{
-          text-align: left;
-      }
-    </style>
+ 
     <script type="text/javascript">
         const BASE_WIDTH = 400;
         const BASE_HEIGHT = 400;
@@ -90,22 +68,31 @@
     var clipSize = 100;
 
     function setBackground() {
-      const img = new Image();
-      img.src = IMAGE_URL;
-      img.onload = function () {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        canvasCtx.clearRect(0,0,canvas.width, canvas.height);
-       
-        canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvasCtx.fillStyle = 'rgba(100,100,100,0.5)';
-        canvasCtx.fillRect(0,0,canvas.width, canvas.height);
-        imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
-        // rangeY.max = canvas.height;
-        rangeX.max = canvas.width;
-        rangeY.max = canvas.height;
-        rangeY.value = canvas.height;
-      };
+
+       // return new Promise(function(res, rej){
+            const img = new Image();
+            img.src = IMAGE_URL;
+            img.onload = function () {
+                 
+                canvas.setAttribute("width", img.width);
+                canvas.setAttribute("height", img.height);
+                
+                canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
+                canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvasCtx.fillStyle = 'rgba(100,100,100,0.5)';
+                canvasCtx.fillRect(0,0,canvas.width, canvas.height);
+                imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
+                // rangeY.max = canvas.height;
+                rangeX.max = canvas.width;
+                rangeY.max = canvas.height;
+                rangeY.value = canvas.height;
+            //    res(0);
+            };
+            img.onerror = function(e){
+            //    rej(e);
+            }
+       // })
+      
     }
 
     function mouseListener(evt) {
@@ -180,9 +167,13 @@
         }
     }
 
-    setBackground();
-    initEvents();
-    updateBackgroundPosition();
+    setBackground()//.then(function(){
+        console.debug("background set");
+        initEvents();
+        updateBackgroundPosition();
+       
+  //  }).catch(function(){});
     window.onmousemove = mouseListener;
+    
   </script>
 </html>
