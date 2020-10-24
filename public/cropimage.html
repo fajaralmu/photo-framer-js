@@ -41,7 +41,7 @@
       <h3>Image Cropper</h3>
       
       <canvas id="main-canvas" id="canvas" ></canvas>
-      <div id="image-clip"  ></div>
+      <div id="image-clip"  ><div id="clip-center"></div></div>
       <div id="controls">
         
         <form >
@@ -70,6 +70,7 @@
     const canvas = byId("main-canvas");
     const canvasCtx = canvas.getContext("2d");
     const IMAGE_URL = "../assets/test.png";
+    const centerClip = byId("clip-center");
     
 
     function setBackground() {
@@ -141,6 +142,8 @@
         imageClip.style.height = clipSize+'px';
         imageClip.style.backgroundPosition = clipX+"px "+(clipY-canvas.height)+"px";
        
+        centerClip.style.marginTop =( (clipSize-centerClip.style.height) / 4 )+'px';
+
         byId("output-clip-size").innerHTML = clipSize + " BG POS "+ imageClip.style.backgroundPosition;
     }
 
@@ -162,9 +165,9 @@
         rangeClipSize.onchange = function(e){
             updateClipSize(e.target.value);
         }
-        imageClip.onmousedown=startDrag;
-        imageClip.onmouseup=stopDrag;
-        imageClip.onmouseout=stopDrag;
+        centerClip.onmousedown=startDrag;
+        // centerClip.onmouseup=function(e){ console.debug("onmouseup"); stopDrag(e) };
+        // centerClip.onmouseout=function(e){ console.debug("onmouseout"); stopDrag(e) };
     }
 
     function showDragInfo(){
@@ -199,10 +202,10 @@
         x: Math.ceil(evt.clientX - rect.left),
         y: Math.ceil(evt.clientY - rect.top),
       };
-      if(position.x < 0 || position.x > (canvas.width-clipSize)) {
+      if(position.x < 0 || position.x > (canvas.width)) {
             return;
       }
-      if(position.y < 0 || position.y > (canvas.height-clipSize)) {
+      if(position.y < 0 || position.y > (canvas.height)) {
             console.debug("y position invalid");
             return;
       }
