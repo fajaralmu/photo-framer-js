@@ -46,9 +46,9 @@
 
       <canvas id="main-canvas" id="canvas" ></canvas>
       <div id="image-clip"  ><div id="clip-center"></div></div>
-      <div id="controls">
+      <div id="controls" class="row">
         
-        <form >
+         <div class="col-6">
             <p>X Position</p>
             <input id="rangeX" type="range" value="0" max="400" min="0" autocomplete="off" />
             <output id="output-x" ></output>
@@ -56,13 +56,15 @@
             <p>Y Position</p> 
             <input id="rangeY" type="range" value="0" max="400" min="0" autocomplete="off" />
             <output id="output-y"  ></output>
-
+          </div>
+          <div class="col-6">
             <p>Clip Size</p> 
-            <input id="rangeClipSize" type="range" value="0"  max="400" min="100" autocomplete="off" />
-            <output id="output-clip-size"  ></output>
+            <input  id="rangeClipSize" type="range" value="0"  max="400" min="100" autocomplete="off" />
+            <p id="output-clip-size"  ></p>
             <p id="drag-position-info"></p>
             <p id="info-draggable"></p>
-        </form>
+          </div>
+
       </div>
     </div>
   </body>
