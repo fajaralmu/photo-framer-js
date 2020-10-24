@@ -19,48 +19,9 @@
     <script src="../js/app.js"></script>
     <script src="../js/html.js"></script>
     <script src="../js/dialogs.js"></script>
+    <script src="../js/frames.js"></script>
     <script type="text/javascript">
-        const GROUPED_FRAME_IMAGES = [
-          {
-            id: "hari_santri",
-            label: "Hari Santri",
-            images: [
-              "twibbon-hari-santri-template.png", 
-            ]
-          },
-          {
-            id:"student",
-            label:"Santri",
-            images: [
-                "PROUD-STUDENT-1.png",
-                "PROUD-STUDENT-2.png"
-            ]
-          },
-          {
-            id:"teacher",
-            label:"Asatidzah",
-            images:[
-              "PROUD-TEACHER-1.png",
-              "PROUD-TEACHER-2.png"
-            ]
-          },
-          {
-            id:"alumnus",
-            label:"Alumni",
-            images:[
-              "PROUD-ALUMNUS-1.png",
-              "PROUD-ALUMNUS-2.png"
-            ]
-          },
-          {
-            id:"partOf",
-            label:"Wali Santri/Calon Santri",
-            images:[
-              "READY-TO-BE-PART-OF-1.png",
-              "READY-TO-BE-PART-OF-2.png"
-            ]
-          },
-        ]
+        
        // const FRAME_IMAGES = GROUPED_FRAME_IMAGES[0].images
         const WIDTH = 1080;
         const HEIGHT = 1080;
@@ -113,25 +74,8 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="card">
-            <div class="card-header">
-              Pilih Frame
-            </div>
-            <div class="card-body">
-              <p>Kategori:</p>
-              <select class="form-control" id="frame-category"></select>
-              <!-- list of frames -->
-              <p>Frame List:</p>
-              <div class="preview-wrapper">
-                <div id="frame-list" class="freme-list row"></div>
-              </div>
-              <p>Selected: <span id="preview-frame-name"><code>Belum ada frame yang dipilih, silakan pilih salah satu dari frame yang tersedia</code></span></p>
-              <div class="preview-wrapper" style="display: none;">
-                <img id="preview-frame" />
-              </div>
-            </div>
-          </div>
+        <div class="col-6"  id="frame-selection-wrapper" include-html="includes/frameselection.html">
+           <h3>Loading...</h3>
         </div>
         <div class="col-6">
           <div class="card">
@@ -200,15 +144,15 @@
      // const inputFrame = byId("input-frame");
       const inputPhoto = byId("input-photo");
       const previewPhoto = byId("preview-photo");
-      const previewFrame = byId("preview-frame");
       const resultPreview = byId("result-preview");
 
-      const selectFrameCategory= byId("frame-category");
-     
+      
       const inputText = byId("custom-text");
       const textModifiers = document.getElementsByClassName("text-modifier");
-
-      const frameList = byId("frame-list");
+      
+      let previewFrame = byId("preview-frame");
+      let selectFrameCategory= byId("frame-category"); 
+      let frameList = byId("frame-list"); 
 
       const downloadButton = byId("downloadButton");
       const downloadLink = byId("downloadLink");
@@ -227,6 +171,10 @@
       const tempFrameCtx = tempFrameCanvas.getContext("2d");
 
       function init() {
+        previewFrame = byId("preview-frame");
+        selectFrameCategory = byId("frame-category"); 
+        frameList = byId("frame-list"); 
+
         fillPreviewAttrs(previewFrame);
         fillPreviewAttrs(previewPhoto);
 
@@ -255,34 +203,9 @@
         populateFrameCategoriesMenu().then(function(index){
           
           displayFrameLists(index);
-        });
+        }).catch(function(e){console.error("ERROR populateFrameCategoriesMenu: ",e)});
       }
-
-      function populateFrameCategoriesMenu(){
-        return new Promise(function(resolve, reject){
-          selectFrameCategory.innerHTML = "";
-          for (let i = 0; i < GROUPED_FRAME_IMAGES.length; i++) {
-            const frameCategory = GROUPED_FRAME_IMAGES[i];
-            const option = createHtmlTag({
-              tagName:'option', value:i,  innerHTML:frameCategory.label
-            });
-            selectFrameCategory.appendChild(option);
-          }
-          selectFrameCategory.onchange = function(e){
-            const selectElement = e.target;
-            if(selectElement.selectedOptions){
-              displayFrameLists(selectElement.selectedOptions[0].value);
-            } else if(selectElement.options[selectElement.selectedIndex]){
-              displayFrameLists(selectElement.options[selectElement.selectedIndex].value);
-            }else{
-              console.debug("Error change frame list");
-            }
-           
-          }
-          console.debug("end populateFrameCategoriesMenu");
-          resolve(0);
-        });
-      }
+ 
 
       function initCanvasSize(){
         canvas.width = WIDTH;
@@ -517,8 +440,10 @@
       function stopLoading(){
         byId("loading").innerHTML = "";
       }
-
-      init();
+      includeHTML(byId("frame-selection-wrapper")).then(function(){
+        init();
+      }).catch(function(e){console.error("ERROR", e)});
+      
     </script>
 
 </body>

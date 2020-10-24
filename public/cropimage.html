@@ -18,6 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css" />
     <link rel="stylesheet" href="../css/cropper.css" />
+    <link rel="stylesheet" href="../css/app.css" />
     <script src="../js/jquery-3.3.1.slim.min.js"></script>
     <script src="../js/popper.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
@@ -25,10 +26,10 @@
     <script src="../js/html.js"></script>
     <script src="../js/dialogs.js"></script>
     <script src="../js/cropper.js"></script>
- 
+    <script src="../js/frames.js"></script>
     <script type="text/javascript">
-        const WIDTH = 1080/3;
-        const HEIGHT = 1080/3; 
+        const WIDTH = 300;
+        const HEIGHT = 300;
         const IMAGE_URL = "../assets/test.png";
         var clipX = 0;
         var clipY = 0;
@@ -43,29 +44,41 @@
         <p id="brief">Click the circle to start movement</p>
       </div>
 
-      <div class="alert alert-warning">
-        <div class="row">
-          <p class="col-12">Select File</p>
-          <div class="col-6"><input id="input-photo-file" type="file" accept="image/*" class="form-control" />
-          </div>
-          <div class="col-6"><button class="btn btn-success" onclick="selectImage()">Process</button>
-          </div>
-        </div>
-      </div>
+     
 
-      <canvas id="main-canvas" id="canvas" ></canvas>
-      <div id="image-clip"  ><div id="clip-center"></div></div>
-      <div id="controls" class="row">
-        
+     
+      <div class="row">
+        <div class="col-6">
+          <div class="alert alert-warning">
+            <div class="row">
+              <div class="col-10"><h4 class="alert-heading" >Select File</h4></div>
+              <div class="col-6"><input id="input-photo-file" type="file" accept="image/*" class="form-control" />
+              </div>
+              <div class="col-6"><button class="btn btn-success" onclick="selectImage()">Process</button>
+              </div>
+            </div>
+          </div>
+          <canvas id="main-canvas" id="canvas" ></canvas>
+          <div id="image-clip"  ><div id="clip-center"></div></div>
+        </div>
+        <div class="col-6"  id="frame-selection-wrapper" include-html="includes/frameselection.html">
+          <h3>Loading...</h3>
+       </div>
+      </div>
+      
+      <div id="controls" class="row"> 
+        <div  class="col-6">
+          <h3>Result Preview</h3>
+          <div id="result-preview" ></div>
+        </div>
          <div class="col-6">
+           <h3>Controls</h3>
             <p>X Position: <output id="output-x" ></output></p>
             <input disabled id="rangeX" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
            
             <p>Y Position: <output id="output-y"  ></output></p> 
             <input disabled id="rangeY" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
-           
-          </div>
-          <div class="col-6">
+            
             <p>Clip Size</p> 
             <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
             <p id="output-clip-size"  ></p>
@@ -73,11 +86,10 @@
             <p id="info-draggable"></p>
           </div> 
       </div>
-      <div >
-        <h3>Result Preview</h3>
-        <div id="result-preview" ></div>
-      </div>
+      
+      
     </div>
+    <canvas style="display: none;" id="temp-frame-canvas" ></canvas>
   </body>
   <script type="text/javascript">
     const imageClip  = byId("image-clip");
@@ -89,8 +101,44 @@
     const canvasCtx = canvas.getContext("2d");
     const centerClip = byId("clip-center");
     const inputPhoto = byId("input-photo-file");
-    
-    var photoData = null;
+
+    const tempFrameCanvas = byId("temp-frame-canvas");
+ 
+    const tempFrameCtx = tempFrameCanvas.getContext("2d");
+
+    //frames
+    let previewFrame = byId("preview-frame");
+    let selectFrameCategory= byId("frame-category"); 
+    let frameList = byId("frame-list"); 
+    let frameImageData = null;
+    let photoData = null;
+
+    function init(){
+      previewFrame = byId("preview-frame");
+      selectFrameCategory = byId("frame-category"); 
+      frameList = byId("frame-list"); 
+
+      fillPreviewAttrs(previewFrame);  
+      // setText();
+      populateFrameCategoriesMenu().then(function(index){
+        
+        displayFrameLists(index);
+      }).catch(function(e){console.error("ERROR populateFrameCategoriesMenu: ",e)});
+
+      setBackground().then(function(){
+        console.debug("background set");
+        updateClipAndPreviewBackground();
+        updateBackgroundPosition();
+       
+      }).catch(function(){});
+        window.onmousemove = mouseListener;
+        window.onkeyup = function(e){
+          const code = e.with || e.keyCode;
+          if(parseInt(code) == 68){
+            setDragStatus(!drag);
+          }
+        }
+    }
 
     function selectImage(){
       toBase64v2(inputPhoto).then(function(data){
@@ -101,6 +149,31 @@
           updateClipAndPreviewBackground();
         });
       });
+    }
+
+    function fillPreviewAttrs(imgElement) {
+        imgElement.width = 300;
+        imgElement.height = 300;
+       // imgElement.className = "img-thumbnail";
+        imgElement.src = "#";
+    }
+    function frameOptionOnChange(index, imageName){ 
+      const img = byId('img-'+imageName);
+      const tempImage = new Image();
+      tempImage.src = img.src;
+      byId("preview-frame-name").innerHTML = "Option "+index+" ("+ imageName +")";
+      
+      tempImage.onload = function(e){
+
+        tempFrameCanvas.width = tempImage.width;
+        tempFrameCanvas.height = tempImage.height;
+
+        tempFrameCtx.drawImage(tempImage,0,0,WIDTH,HEIGHT);
+        frameImageData = tempFrameCanvas.toDataURL();
+
+        console.debug(imageName," Frame size: ", tempImage.width,"x", tempImage.height);
+      }
+      previewFrame.src = img.src; 
     }
 
     function updateClipAndPreviewBackground(){
@@ -123,6 +196,8 @@
                 canvas.setAttribute("width", dinemsion.width);
                 canvas.setAttribute("height", dinemsion.height); 
                 
+                console.debug("dinemsion : ", dinemsion);
+
                 canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
                 canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 photoData = canvas.toDataURL();
@@ -196,19 +271,10 @@
     }
 
     initEventsAndProperties();
-    setBackground().then(function(){
-        console.debug("background set");
-        updateClipAndPreviewBackground();
-        updateBackgroundPosition();
-       
-   }).catch(function(){});
-    window.onmousemove = mouseListener;
-    window.onkeyup = function(e){
-      const code = e.with || e.keyCode;
-      if(parseInt(code) == 68){
-        setDragStatus(!drag);
-      }
-    }
+    includeHTML(byId("frame-selection-wrapper")).then(function(){
+        init();
+    }).catch(function(e){console.error("ERROR", e)});
+    
     
   </script>
 </html>

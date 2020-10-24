@@ -63,32 +63,32 @@ function caliberateImageSize(img) {
     if (!adjust) {
         return dimension;
     }
-    const w = img.width;
-    const h = img.height;
+    const imageWidth = img.width;
+    const imageHeight = img.height;
 
     var adjustedSide = null;
     var finalWidth = WIDTH;
     var finalHeight = HEIGHT;
-    if (w > h) {
+    if (imageWidth > imageHeight) {
         var multiplier = 1;
-        if (h <= HEIGHT) {
-            multiplier = HEIGHT / h;
-        } else if (h > HEIGHT) {
-            multiplier = HEIGHT / h;
+        if (imageHeight <= HEIGHT) {
+            multiplier = HEIGHT / imageHeight;
+        } else if (imageHeight > HEIGHT) {
+            multiplier = HEIGHT / imageHeight;
         }
-        finalWidth = w * multiplier;
-        finalHeight = h * multiplier;
+        finalWidth = imageWidth * multiplier;
+        finalHeight = imageHeight * multiplier;
 
         adjustedSide = "w";
     } else {
         var multiplier = 1;
-        if (w <= WIDTH) {
-            multiplier = WIDTH / w;
-        } else if (w > WIDTH) {
-            multiplier = WIDTH / w;
+        if (imageWidth <= WIDTH) {
+            multiplier = WIDTH / imageWidth;
+        } else if (imageWidth > WIDTH) {
+            multiplier = WIDTH / imageWidth;
         }
-        finalWidth = w * multiplier;
-        finalHeight = h * multiplier;
+        finalWidth = imageWidth * multiplier;
+        finalHeight = imageHeight * multiplier;
 
         adjustedSide = "h";
     }
@@ -97,3 +97,32 @@ function caliberateImageSize(img) {
     dimension.adjustedSide = adjustedSide;
     return dimension;
 }
+
+///source: https://www.w3schools.com/howto/howto_html_include.asp
+function includeHTML(elmnt) {
+    return new Promise(function(res, rej){
+        let file, xhttp; 
+    
+        /*search for elements with a certain atrribute:*/
+        file = elmnt.getAttribute("include-html");
+        if (file) {
+            /* Make an HTTP request using the attribute value as the file name: */
+            xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {elmnt.innerHTML = this.responseText; }
+                if (this.status == 404) {elmnt.innerHTML = "Page not found:"+file;}
+
+                res(0);
+                /* Remove the attribute, and call this function once more: */
+                elmnt.removeAttribute("include-html");
+            }
+        }
+        xhttp.open("GET", file, true);
+        xhttp.send();
+        /* Exit the function: */
+        
+       
+    }
+    });
+  }
