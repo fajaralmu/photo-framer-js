@@ -14,31 +14,34 @@
     />
     <meta property="og:type" content="website" />
 
-    <title>Image Cropper</title>
+    <title>Kafila Media Frame</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
-    <link rel="stylesheet" href="../css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/cropper.css" />
-    <link rel="stylesheet" href="../css/app.css" />
-    <script src="../js/jquery-3.3.1.slim.min.js"></script>
-    <script src="../js/popper.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/app.js"></script>
-    <script src="../js/html.js"></script>
-    <script src="../js/dialogs.js"></script>
-    <script src="../js/cropper.js"></script>
-    <script src="../js/frames.js"></script>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/cropper.css" />
+    <link rel="stylesheet" href="../../css/app.css" />
+    <script src="../../js/jquery-3.3.1.slim.min.js"></script>
+    <script src="../../js/popper.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/app.js"></script>
+    <script src="../../js/html.js"></script>
+    <script src="../../js/dialogs.js"></script>
+    <script src="../../js/cropper.js"></script>
+    <script src="../../js/frames.js"></script>
     <script type="text/javascript">
         const WIDTH = 500;
         const HEIGHT = 500;
-        const IMAGE_URL = "../assets/test.png";
+        const IMAGE_URL = "../../assets/test.png";
         var clipX = 0;
         var clipY = 0;
         var clipSize = 100;
+        applicationVersion = 2;
     </script>
   </head>
   <body>
     <div class="container">
-      <h3>Image Cropper</h3> 
+      <div class="header" style="text-align: center;">
+        <h3>Kafila Media Frame</h3>
+      </div>
       <!--ROW #1-->
       <div class="row">
         <div class="col-6">
@@ -55,7 +58,7 @@
           <div id="image-clip"  ><div id="clip-center"></div></div>
           <h4  id="brief">Click the circle to start movement</h4>
         </div>
-        <div class="col-6"  id="frame-selection-wrapper" include-html="includes/frameselection.html">
+        <div class="col-6"  id="frame-selection-wrapper" include-html="../includes/frameselection.html">
           <h3>Loading...</h3>
        </div>
        <!--ROW #2-->
@@ -81,11 +84,12 @@
         </div>
          
       </div>
-      <div><button id="show-preview-btn" class="btn btn-secondary" onclick="showResult()" >Show Result</button></div>
-      <canvas id="result-canvas"></canvas>
+      <div><button id="show-preview-btn" class="btn btn-secondary" onclick="showResult()" >Download</button></div>
+      <canvas style="display: none;" id="result-canvas"></canvas>
       
     </div>
     <canvas style="display: none;" id="temp-frame-canvas" ></canvas>
+    <a style="display: none;" id="downloadLink"></a>
   </body>
   <script type="text/javascript">
     const imageClip  = byId("image-clip");
@@ -97,6 +101,8 @@
     const resultFrame = byId("result-frame");
     const centerClip = byId("clip-center");
     const inputPhoto = byId("input-photo-file"); 
+
+    const downloadLink = byId("downloadLink");
     
     const canvas = byId("main-canvas");
     const canvasCtx = canvas.getContext("2d");
@@ -306,7 +312,29 @@
         return;
       }
       startLoading();
-      drawPhoto().then(function(){ return drawFrame()}).finally(function(){endLoading()});
+      drawPhoto()
+        .then(function(){ 
+          return drawFrame()
+        })
+        .finally(function(){
+          saveAsImage();
+          endLoading()
+        });
+    }
+
+    function saveAsImage(){
+      const data = resultCanvas.toDataURL("image/png");
+      const fileName = "KafilaFrameResultv2_"+(new Date()).toISOString()+".png";
+      downloadLink.href = data;
+      downloadLink.download = fileName;
+      try{
+        
+        downloadLink.click();
+      }catch(e){
+        console.warn(e);
+        alert("Mohon Maaf Download Gagal. Silakan simpan gambar secara manual pada bagian preview"); 
+        
+      }
     }
 
     function drawPhoto(){
