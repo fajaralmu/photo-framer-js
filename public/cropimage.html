@@ -61,22 +61,23 @@
        <!--ROW #2-->
        <div class="col-6">
         <h3>Controls</h3>
+        <p>Clip Size</p> 
+        <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
+        <p id="output-clip-size"  ></p>
          <p>X Position: <output id="output-x" ></output></p>
          <input disabled id="rangeX" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
         
          <p>Y Position: <output id="output-y"  ></output></p> 
          <input disabled id="rangeY" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
          
-         <p>Clip Size</p> 
-         <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
-         <p id="output-clip-size"  ></p>
+        
          <p id="drag-position-info"></p>
          <p id="info-draggable"></p>
        </div> 
         <div  class="col-6">
           <h3>Result Preview</h3>
           <div id="result-preview" ></div>
-          
+          <div id="result-frame"></div>
         </div>
          
       </div>
@@ -92,6 +93,7 @@
     const rangeClipSize = byId("rangeClipSize");
     const canvas = byId("main-canvas");
     const resultPreview = byId("result-preview");
+    const resultFrame = byId("result-frame");
     const canvasCtx = canvas.getContext("2d");
     const centerClip = byId("clip-center");
     const inputPhoto = byId("input-photo-file");
@@ -164,7 +166,7 @@
 
         tempFrameCtx.drawImage(tempImage,0,0,WIDTH,HEIGHT);
         frameImageData = tempFrameCanvas.toDataURL();
-
+        resultFrame.style.backgroundImage = 'url("'+frameImageData+'")';
         console.debug(imageName," Frame size: ", tempImage.width,"x", tempImage.height);
       }
       previewFrame.src = img.src; 

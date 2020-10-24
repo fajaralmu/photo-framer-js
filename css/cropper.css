@@ -38,4 +38,13 @@
   width: 500px;
   height: 500px;
   background-repeat: no-repeat;
+  position: absolute;
+}
+
+#result-frame{
+  border: solid 1px #cccccc;
+  position: relative;
+  width: 500px;
+  height: 500px;
+  background-repeat: no-repeat;
 }
