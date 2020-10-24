@@ -34,7 +34,8 @@
 }
 
 #result-preview {
-    width: 500px;
-    height: 500px;
-    background-repeat: no-repeat;
+  border: solid 1px #cccccc;
+  width: 500px;
+  height: 500px;
+  background-repeat: no-repeat;
 }

@@ -27,8 +27,8 @@
     <script src="../js/cropper.js"></script>
  
     <script type="text/javascript">
-        const WIDTH = 400;
-        const HEIGHT = 400;
+        const WIDTH = 1080/3;
+        const HEIGHT = 1080/3;
         var clipX = 0;
         var clipY = 0;
         var clipSize = 100;
@@ -42,22 +42,32 @@
         <p id="brief">Click the circle to start movement</p>
       </div>
 
+      <div class="row">
+        <p class="col-12">Select File</p>
+        <div class="col-6">
+          <input id="input-photo-file" type="file" accept="image/*" class="form-control" />
+        </div>
+        <div class="col-6">
+          <button class="btn btn-success" onclick="selectImage()">Process</button>
+        </div>
+        
+      </div>
+
       <canvas id="main-canvas" id="canvas" ></canvas>
       <div id="image-clip"  ><div id="clip-center"></div></div>
       <div id="controls" class="row">
         
          <div class="col-6">
-            <p>X Position</p>
-            <input id="rangeX" type="range" value="0" max="400" min="0" autocomplete="off" />
-            <output id="output-x" ></output>
-        
-            <p>Y Position</p> 
-            <input id="rangeY" type="range" value="0" max="400" min="0" autocomplete="off" />
-            <output id="output-y"  ></output>
+            <p>X Position: <output id="output-x" ></output></p>
+            <input disabled id="rangeX" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
+           
+            <p>Y Position: <output id="output-y"  ></output></p> 
+            <input disabled id="rangeY" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
+           
           </div>
           <div class="col-6">
             <p>Clip Size</p> 
-            <input  id="rangeClipSize" type="range" value="0"  max="400" min="100" autocomplete="off" />
+            <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
             <p id="output-clip-size"  ></p>
             <p id="drag-position-info"></p>
             <p id="info-draggable"></p>
@@ -65,9 +75,7 @@
       </div>
       <div >
         <h3>Result Preview</h3>
-        <div id="result-preview">
-
-        </div>
+        <div id="result-preview" ></div>
       </div>
     </div>
   </body>
@@ -81,17 +89,40 @@
     const canvasCtx = canvas.getContext("2d");
     const IMAGE_URL = "../assets/test.png";
     const centerClip = byId("clip-center");
+    const inputPhoto = byId("input-photo-file");
     
+    var photoData = null;
+
+    function selectImage(){
+      toBase64v2(inputPhoto).then(function(data){
+        photoData = data;
+          
+        setBackground().then(function(){
+          updateBackgroundPosition();
+          updateClipAndPreviewBackground();
+        });
+      });
+    }
+
+    function updateClipAndPreviewBackground(){
+      imageClip.style.backgroundImage = 'url("'+canvas.toDataURL()+'")';
+      resultPreview.style.backgroundImage = 'url("'+canvas.toDataURL()+'")';
+    }
+
+    function getImageSrc(){
+      const src =  photoData || IMAGE_URL;
+      return src;
+    }
 
     function setBackground() {
 
        return new Promise(function(res, rej){
             const img = new Image();
-            img.src = IMAGE_URL;
+            img.src = getImageSrc();
             img.onload = function () {
-                 
-                canvas.setAttribute("width", img.width);
-                canvas.setAttribute("height", img.height);
+                const dinemsion = caliberateImageSize(img)
+                canvas.setAttribute("width", dinemsion.width);
+                canvas.setAttribute("height", dinemsion.height); 
                 
                 canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
                 canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -103,6 +134,7 @@
                 rangeY.max = canvas.height;
                 rangeY.value = canvas.height;
                 clipY = rangeY.value;
+                photoData = canvas.toDataURL();
                 res(0);
             }
             img.onerror = function(e){  rej(e); }
@@ -114,10 +146,7 @@
 
     function updateClipY(y){  updateClipXY(clipX, y);   }
 
-    function updateClipSize(size){
-        clipSize = size;
-        updateBackgroundPosition();
-    }
+    function updateClipSize(size){  clipSize = size;  updateBackgroundPosition();  }
 
     function updateClipXY(x, y){
         clipX = -x;
@@ -153,10 +182,7 @@
 
     function initEventsAndProperties(){
         //Props//
-        imageClip.style.backgroundImage = 'url('+IMAGE_URL+')';
-        resultPreview.style.backgroundImage = 'url('+IMAGE_URL+')';
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
+        updateClipAndPreviewBackground(); 
 
         //Events//
         canvas.onmousedown = function(e){ setDragStatus(true) };
