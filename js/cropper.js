@@ -51,3 +51,28 @@ function setDragStatus(status) {
     drag = status;
     showDragInfo();
 }
+
+function mouseListener(evt) {
+    if(!drag){
+        //console.debug("Drag disabled");
+        return;
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    const position = {
+      x: Math.ceil(evt.clientX - rect.left),
+      y: Math.ceil(evt.clientY - rect.top),
+    };
+    if(position.x < 0 || position.x > (canvas.width)) {
+          return;
+    }
+    if(position.y < 0 || position.y > (canvas.height)) {
+          console.debug("y position invalid");
+          return;
+    }
+
+    byId("drag-position-info").innerHTML = position.x+","+position.y;
+    updateClipXY( position.x-(clipSize/2), (canvas.height-position.y )+(clipSize/2));
+   
+    canvasCtx.fillRect(position.x, position.y, 1, 1);
+  }

@@ -28,7 +28,8 @@
  
     <script type="text/javascript">
         const WIDTH = 1080/3;
-        const HEIGHT = 1080/3;
+        const HEIGHT = 1080/3; 
+        const IMAGE_URL = "../assets/test.png";
         var clipX = 0;
         var clipY = 0;
         var clipSize = 100;
@@ -42,15 +43,14 @@
         <p id="brief">Click the circle to start movement</p>
       </div>
 
-      <div class="row">
-        <p class="col-12">Select File</p>
-        <div class="col-6">
-          <input id="input-photo-file" type="file" accept="image/*" class="form-control" />
+      <div class="alert alert-warning">
+        <div class="row">
+          <p class="col-12">Select File</p>
+          <div class="col-6"><input id="input-photo-file" type="file" accept="image/*" class="form-control" />
+          </div>
+          <div class="col-6"><button class="btn btn-success" onclick="selectImage()">Process</button>
+          </div>
         </div>
-        <div class="col-6">
-          <button class="btn btn-success" onclick="selectImage()">Process</button>
-        </div>
-        
       </div>
 
       <canvas id="main-canvas" id="canvas" ></canvas>
@@ -87,7 +87,6 @@
     const canvas = byId("main-canvas");
     const resultPreview = byId("result-preview");
     const canvasCtx = canvas.getContext("2d");
-    const IMAGE_URL = "../assets/test.png";
     const centerClip = byId("clip-center");
     const inputPhoto = byId("input-photo-file");
     
@@ -110,9 +109,7 @@
     }
 
     function getImageSrc(){
-      if(photoData != null){
-        return photoData;
-      }
+      if(photoData != null) { return photoData; }
       return IMAGE_URL;
     }
 
@@ -196,32 +193,6 @@
         centerClip.onmousedown=toggleDrag;
         // centerClip.onmouseup=function(e){ console.debug("onmouseup"); stopDrag(e) };
         // centerClip.onmouseout=function(e){ console.debug("onmouseout"); stopDrag(e) };
-    }
- 
-
-    function mouseListener(evt) {
-        if(!drag){
-           //console.debug("Drag disabled");
-            return;
-        }
-     // const canvas = evt.target;
-      const rect = canvas.getBoundingClientRect();
-      const position = {
-        x: Math.ceil(evt.clientX - rect.left),
-        y: Math.ceil(evt.clientY - rect.top),
-      };
-      if(position.x < 0 || position.x > (canvas.width)) {
-            return;
-      }
-      if(position.y < 0 || position.y > (canvas.height)) {
-            console.debug("y position invalid");
-            return;
-      }
-
-      byId("drag-position-info").innerHTML = position.x+","+position.y;
-      updateClipXY( position.x-(clipSize/2), (canvas.height-position.y )+(clipSize/2));
-     
-      canvasCtx.fillRect(position.x, position.y, 1, 1);
     }
 
     initEventsAndProperties();
