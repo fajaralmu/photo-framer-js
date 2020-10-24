@@ -28,8 +28,8 @@
     <script src="../js/cropper.js"></script>
     <script src="../js/frames.js"></script>
     <script type="text/javascript">
-        const WIDTH = 300;
-        const HEIGHT = 300;
+        const WIDTH = 500;
+        const HEIGHT = 500;
         const IMAGE_URL = "../assets/test.png";
         var clipX = 0;
         var clipY = 0;
@@ -192,25 +192,44 @@
             const img = new Image();
             img.src = getImageSrc();
             img.onload = function () {
-                const dinemsion = caliberateImageSize(img)
-                canvas.setAttribute("width", dinemsion.width);
-                canvas.setAttribute("height", dinemsion.height); 
-                
-                console.debug("dinemsion : ", dinemsion);
+              const dinemsion = caliberateImageSize(img);
+              let finalWidth = dinemsion.width;
+              let finalHeight = dinemsion.height;
+              let multiplier = 0;
+              if(dinemsion.adjustedSide){
+                switch(dinemsion.adjustedSide){
+                  case 'w':
+                    multiplier = finalWidth/WIDTH;
+                    finalWidth = finalWidth/multiplier;
+                    finalHeight = finalHeight/multiplier; 
+                  break;
+                  case 'h':
+                    multiplier = finalHeight/HEIGHT;
+                    finalWidth = finalWidth/multiplier;
+                    finalHeight = finalHeight/multiplier; 
+                  break;
+                }
+              }
 
-                canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
-                canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                photoData = canvas.toDataURL();
-                canvasCtx.fillStyle = 'rgba(100,100,100,0.5)';
-                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-                imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
-                // rangeY.max = canvas.height;
-                rangeX.max = canvas.width;
-                rangeY.max = canvas.height;
-                rangeY.value = canvas.height;
-                clipY = rangeY.value;
-                
-                res(0);
+              canvas.setAttribute("width", finalWidth);
+              canvas.setAttribute("height", finalHeight); 
+              
+              console.debug("dinemsion : ", dinemsion);
+
+              canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
+              canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              photoData = canvas.toDataURL();
+
+              canvasCtx.fillStyle = 'rgba(100,100,100,0.5)';
+              canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+              imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
+              // rangeY.max = canvas.height;
+              rangeX.max = canvas.width;
+              rangeY.max = canvas.height;
+              rangeY.value = canvas.height;
+              clipY = rangeY.value;
+              
+              res(0);
             }
             img.onerror = function(e){  rej(e); }
        });
