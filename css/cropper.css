@@ -48,3 +48,7 @@
   height: 500px;
   background-repeat: no-repeat;
 }
+
+#result-canvas{
+  border: solid 1px #cccccc;
+}

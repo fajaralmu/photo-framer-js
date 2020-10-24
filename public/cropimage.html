@@ -81,7 +81,8 @@
         </div>
          
       </div>
-      
+      <div><button id="show-preview-btn" class="btn btn-secondary" onclick="showResult()" >Show Result</button></div>
+      <canvas id="result-canvas"></canvas>
       
     </div>
     <canvas style="display: none;" id="temp-frame-canvas" ></canvas>
@@ -91,16 +92,20 @@
     const rangeX = byId("rangeX");
     const rangeY = byId("rangeY");
     const rangeClipSize = byId("rangeClipSize");
-    const canvas = byId("main-canvas");
+   
     const resultPreview = byId("result-preview");
     const resultFrame = byId("result-frame");
-    const canvasCtx = canvas.getContext("2d");
     const centerClip = byId("clip-center");
-    const inputPhoto = byId("input-photo-file");
+    const inputPhoto = byId("input-photo-file"); 
+    
+    const canvas = byId("main-canvas");
+    const canvasCtx = canvas.getContext("2d");
 
     const tempFrameCanvas = byId("temp-frame-canvas");
- 
     const tempFrameCtx = tempFrameCanvas.getContext("2d");
+
+    const resultCanvas = byId("result-canvas");
+    const resultCanvasContext = resultCanvas.getContext("2d");
 
     //frames
     let previewFrame = byId("preview-frame");
@@ -273,6 +278,8 @@
     function initEventsAndProperties(){
         //Props//
         updateClipAndPreviewBackground(); 
+        resultCanvas.width  = WIDTH;
+        resultCanvas.height = HEIGHT;
 
         //Events//
         canvas.onmousedown = function(e){ setDragStatus(true) };
@@ -284,6 +291,49 @@
         // centerClip.onmouseup=function(e){ console.debug("onmouseup"); stopDrag(e) };
         // centerClip.onmouseout=function(e){ console.debug("onmouseout"); stopDrag(e) };
     }
+
+    function startLoading(){
+      byId("show-preview-btn").innerHTML = "Loading...";
+    }
+
+    function endLoading(){
+      byId("show-preview-btn").innerHTML = "Show Result";
+    }
+
+    function showResult(){
+      if(frameImageData==null || photoData ==null){
+        alert("Please select frame or photo!");
+        return;
+      }
+      startLoading();
+      drawPhoto().then(function(){ return drawFrame()}).finally(function(){endLoading()});
+    }
+
+    function drawPhoto(){
+      const image = new Image();
+      image.src = photoData;
+      return new Promise(function(res, rej){
+        image.onload = function(e){
+          resultCanvasContext.clearRect(0,0, 1080, 1080); 
+          const ratio = 500/clipSize ;
+          resultCanvasContext.drawImage(image, ratio*clipX, ratio*(clipY-canvas.height), ratio*image.width, ratio*image.height);
+          res(0);
+        }
+      })
+    }
+
+    function drawFrame(){
+      const image = new Image();
+      image.src = frameImageData;
+      return new Promise(function(res, rej){
+        image.onload = function(e){ 
+          console.debug("Frame size: ", image.width,"x", image.height);
+          resultCanvasContext.drawImage(image, 0, 0, image.width, image.width);
+          res(0);
+        }
+      });
+    }
+
 
     initEventsAndProperties();
     includeHTML(byId("frame-selection-wrapper")).then(function(){
