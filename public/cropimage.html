@@ -59,25 +59,26 @@
           <h3>Loading...</h3>
        </div>
        <!--ROW #2-->
+       <div class="col-6">
+        <h3>Controls</h3>
+         <p>X Position: <output id="output-x" ></output></p>
+         <input disabled id="rangeX" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
+        
+         <p>Y Position: <output id="output-y"  ></output></p> 
+         <input disabled id="rangeY" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
+         
+         <p>Clip Size</p> 
+         <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
+         <p id="output-clip-size"  ></p>
+         <p id="drag-position-info"></p>
+         <p id="info-draggable"></p>
+       </div> 
         <div  class="col-6">
           <h3>Result Preview</h3>
           <div id="result-preview" ></div>
           
         </div>
-         <div class="col-6">
-           <h3>Controls</h3>
-            <p>X Position: <output id="output-x" ></output></p>
-            <input disabled id="rangeX" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
-           
-            <p>Y Position: <output id="output-y"  ></output></p> 
-            <input disabled id="rangeY" class="form-control"  type="range" value="0" max="400" min="0" autocomplete="off" />
-            
-            <p>Clip Size</p> 
-            <input  id="rangeClipSize" class="form-control"  type="range" value="0"  max="400" min="100" autocomplete="off" />
-            <p id="output-clip-size"  ></p>
-            <p id="drag-position-info"></p>
-            <p id="info-draggable"></p>
-          </div> 
+         
       </div>
       
       
