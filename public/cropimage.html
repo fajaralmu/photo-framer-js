@@ -24,13 +24,11 @@
     <script src="../js/app.js"></script>
     <script src="../js/html.js"></script>
     <script src="../js/dialogs.js"></script>
+    <script src="../js/cropper.js"></script>
  
     <script type="text/javascript">
-        const BASE_WIDTH = 400;
-        const BASE_HEIGHT = 400;
-        var dragInitialPosition = {x:0, y:0}
-        var dragLatestPosition = {x:0, y:0}
-        var drag = false;
+        const WIDTH = 400;
+        const HEIGHT = 400;
         var clipX = 0;
         var clipY = 0;
         var clipSize = 100;
@@ -63,8 +61,13 @@
             <p id="output-clip-size"  ></p>
             <p id="drag-position-info"></p>
             <p id="info-draggable"></p>
-          </div>
+          </div> 
+      </div>
+      <div >
+        <h3>Result Preview</h3>
+        <div id="result-preview">
 
+        </div>
       </div>
     </div>
   </body>
@@ -74,6 +77,7 @@
     const rangeY = byId("rangeY");
     const rangeClipSize = byId("rangeClipSize");
     const canvas = byId("main-canvas");
+    const resultPreview = byId("result-preview");
     const canvasCtx = canvas.getContext("2d");
     const IMAGE_URL = "../assets/test.png";
     const centerClip = byId("clip-center");
@@ -99,36 +103,16 @@
                 rangeY.max = canvas.height;
                 rangeY.value = canvas.height;
                 clipY = rangeY.value;
-               res(0);
-            };
-            img.onerror = function(e){
-               rej(e);
+                res(0);
             }
+            img.onerror = function(e){  rej(e); }
        });
       
     }
+ 
+    function updateClipX(x){  updateClipXY(x, clipY);  }
 
-    
-    function release(){
-        setDragStatus(false);
-        console.debug("On Mouse Up");
-       
-    }
-
-    function setDragStatus(status){
-      drag = status;
-      showDragInfo();
-    }
-
-    function updateClipX(x){
-       
-        updateClipXY(x, clipY);
-    }
-
-    function updateClipY(y){
-        
-        updateClipXY(clipX, y);
-    }
+    function updateClipY(y){  updateClipXY(clipX, y);   }
 
     function updateClipSize(size){
         clipSize = size;
@@ -156,68 +140,35 @@
        
         centerClip.style.marginTop =( (clipSize/2-25) )+'px';
 
-        byId("output-clip-size").innerHTML = clipSize + " BG POS "+ imageClip.style.backgroundPosition;
+        byId("output-clip-size").innerHTML = clipSize + " background-image coordinate "+ imageClip.style.backgroundPosition;
+   
+        updateResultPreview();
+      }
+
+    function updateResultPreview(){
+      const clipRatio = 500/ clipSize;
+      resultPreview.style.backgroundPosition = clipRatio*clipX+"px "+ clipRatio*(clipY-canvas.height)+"px";
+      resultPreview.style.backgroundSize = clipRatio*canvas.width + 'px';
     }
 
     function initEventsAndProperties(){
         //Props//
         imageClip.style.backgroundImage = 'url('+IMAGE_URL+')';
-        canvas.width = BASE_WIDTH;
-        canvas.height = BASE_HEIGHT;
+        resultPreview.style.backgroundImage = 'url('+IMAGE_URL+')';
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
 
         //Events//
         canvas.onmousedown = function(e){ setDragStatus(true) };
         canvas.onmouseup =function(e){ setDragStatus(false) };
-        rangeX.onchange = function(e){
-            updateClipX(e.target.value);
-        }
-        rangeY.onchange = function(e){
-            updateClipY(e.target.value);
-        }
-        rangeClipSize.onchange = function(e){
-            updateClipSize(e.target.value);
-        }
+        rangeX.onchange = function(e){  updateClipX(e.target.value);  }
+        rangeY.onchange = function(e){  updateClipY(e.target.value);  }
+        rangeClipSize.onchange = function(e){  updateClipSize(e.target.value);  }
         centerClip.onmousedown=toggleDrag;
         // centerClip.onmouseup=function(e){ console.debug("onmouseup"); stopDrag(e) };
         // centerClip.onmouseout=function(e){ console.debug("onmouseout"); stopDrag(e) };
     }
-
-    function showDragInfo(){
-      byId("info-draggable").innerHTML = "DRAG "+drag;
-      if(!drag){
-        byId("brief").innerHTML = "Click the circle to start movement";
-      } else {
-        byId("brief").innerHTML = "Specify movement point, Click again to stop movement";
-      }
-    }
-
-    function toggleDrag(evt){
-      let briefInfo;
-      if(!drag){ 
-        startDrag(evt);
-      } else { 
-        stopDrag(evt);
-        drag = false;
-      }
-      showDragInfo();
-    }
-
-    function startDrag(evt){
-        
-        drag = true;
-        showDragInfo();
-        // dragInitialPosition.x =  evt.clientX;
-        // dragInitialPosition.y =  evt.clientY;
-        console.debug("Start Drag at", evt.clientX, ",", evt.clientY);
-    }
-
-    function stopDrag(evt){
-        // drag = false; 
-        dragLatestPosition.x =  evt.clientX;
-        dragLatestPosition.y =  evt.clientY;
-        console.debug("Stopped Drag at", dragInitialPosition.x, ",", dragInitialPosition.y);
-        showDragInfo();
-    }
+ 
 
     function mouseListener(evt) {
         if(!drag){
