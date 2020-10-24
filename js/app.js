@@ -53,15 +53,11 @@ function toBase64Multiple(file, callback) {
 }
 
 /**
- * 
+ * WIDTH & HEIGHT must be set
  * @param {Image} img 
  */
 function caliberateImageSize(img) {
-    const dimension = {
-        width: WIDTH,
-        height: HEIGHT,
-        adjustedSide: null
-    };
+    const dimension = { width: WIDTH,  height: HEIGHT,  adjustedSide: null };
     const adjust = img.width != img.height;
 
     if (!adjust) {

@@ -105,13 +105,15 @@
     }
 
     function updateClipAndPreviewBackground(){
-      imageClip.style.backgroundImage = 'url("'+canvas.toDataURL()+'")';
-      resultPreview.style.backgroundImage = 'url("'+canvas.toDataURL()+'")';
+      imageClip.style.backgroundImage = 'url("'+getImageSrc()+'")';
+      resultPreview.style.backgroundImage = 'url("'+getImageSrc()+'")';
     }
 
     function getImageSrc(){
-      const src =  photoData || IMAGE_URL;
-      return src;
+      if(photoData != null){
+        return photoData;
+      }
+      return IMAGE_URL;
     }
 
     function setBackground() {
@@ -126,15 +128,16 @@
                 
                 canvasCtx.clearRect(0,0,canvas.width, canvas.height); 
                 canvasCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                photoData = canvas.toDataURL();
                 canvasCtx.fillStyle = 'rgba(100,100,100,0.5)';
-                canvasCtx.fillRect(0,0,canvas.width, canvas.height);
+                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
                 imageClip.style.marginTop = -1* parseInt(canvas.height+9)+'px';
                 // rangeY.max = canvas.height;
                 rangeX.max = canvas.width;
                 rangeY.max = canvas.height;
                 rangeY.value = canvas.height;
                 clipY = rangeY.value;
-                photoData = canvas.toDataURL();
+                
                 res(0);
             }
             img.onerror = function(e){  rej(e); }
@@ -224,7 +227,7 @@
     initEventsAndProperties();
     setBackground().then(function(){
         console.debug("background set");
-        
+        updateClipAndPreviewBackground();
         updateBackgroundPosition();
        
    }).catch(function(){});
