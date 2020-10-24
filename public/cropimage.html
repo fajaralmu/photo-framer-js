@@ -176,19 +176,22 @@
 
     function showDragInfo(){
       byId("info-draggable").innerHTML = "DRAG "+drag;
+      if(!drag){
+        byId("brief").innerHTML = "Click the circle to start movement";
+      } else {
+        byId("brief").innerHTML = "Specify movement point, Click again to stop movement";
+      }
     }
 
     function toggleDrag(evt){
       let briefInfo;
-      if(!drag){
-        briefInfo = "Specify movement point, Click again to stop movement";
+      if(!drag){ 
         startDrag(evt);
-      } else {
-        briefInfo = "Click the circle to start movement";
+      } else { 
         stopDrag(evt);
         drag = false;
       }
-      byId("brief").innerHTML = briefInfo;
+      showDragInfo();
     }
 
     function startDrag(evt){
