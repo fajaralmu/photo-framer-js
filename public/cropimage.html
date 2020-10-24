@@ -39,7 +39,11 @@
   <body>
     <div class="container">
       <h3>Image Cropper</h3>
-      
+      <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading" >Brief</h4>
+        <p id="brief">Click the circle to start movement</p>
+      </div>
+
       <canvas id="main-canvas" id="canvas" ></canvas>
       <div id="image-clip"  ><div id="clip-center"></div></div>
       <div id="controls">
@@ -142,7 +146,7 @@
         imageClip.style.height = clipSize+'px';
         imageClip.style.backgroundPosition = clipX+"px "+(clipY-canvas.height)+"px";
        
-        centerClip.style.marginTop =( (clipSize-centerClip.style.height) / 4 )+'px';
+        centerClip.style.marginTop =( (clipSize/2-25) )+'px';
 
         byId("output-clip-size").innerHTML = clipSize + " BG POS "+ imageClip.style.backgroundPosition;
     }
@@ -165,13 +169,26 @@
         rangeClipSize.onchange = function(e){
             updateClipSize(e.target.value);
         }
-        centerClip.onmousedown=startDrag;
+        centerClip.onmousedown=toggleDrag;
         // centerClip.onmouseup=function(e){ console.debug("onmouseup"); stopDrag(e) };
         // centerClip.onmouseout=function(e){ console.debug("onmouseout"); stopDrag(e) };
     }
 
     function showDragInfo(){
       byId("info-draggable").innerHTML = "DRAG "+drag;
+    }
+
+    function toggleDrag(evt){
+      let briefInfo;
+      if(!drag){
+        briefInfo = "Specify movement point, Click again to stop movement";
+        startDrag(evt);
+      } else {
+        briefInfo = "Click the circle to start movement";
+        stopDrag(evt);
+        drag = false;
+      }
+      byId("brief").innerHTML = briefInfo;
     }
 
     function startDrag(evt){
@@ -184,7 +201,7 @@
     }
 
     function stopDrag(evt){
-        //drag = false; 
+        // drag = false; 
         dragLatestPosition.x =  evt.clientX;
         dragLatestPosition.y =  evt.clientY;
         console.debug("Stopped Drag at", dragInitialPosition.x, ",", dragInitialPosition.y);
@@ -209,15 +226,10 @@
             console.debug("y position invalid");
             return;
       }
-      
-    //   clipX =  position.x;
-    //   clipY =  position.y+canvas.height;
-      byId("drag-position-info").innerHTML = position.x+","+position.y;
-      updateClipXY( position.x, (canvas.height-position.y ));
-    //   console.debug("moving: ",  position.x, ",", position.y, "evt.clientX: ", evt.clientX, "evt.clientY: ", evt.clientY);
 
-    //   updateBackgroundPosition();
-     // console.debug("position: ", position);
+      byId("drag-position-info").innerHTML = position.x+","+position.y;
+      updateClipXY( position.x-(clipSize/2), (canvas.height-position.y )+(clipSize/2));
+     
       canvasCtx.fillRect(position.x, position.y, 1, 1);
     }
 
