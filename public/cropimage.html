@@ -110,8 +110,14 @@
 
     
     function release(){
-        drag = false;
+        setDragStatus(false);
         console.debug("On Mouse Up");
+       
+    }
+
+    function setDragStatus(status){
+      drag = status;
+      showDragInfo();
     }
 
     function updateClipX(x){
@@ -160,8 +166,8 @@
         canvas.height = BASE_HEIGHT;
 
         //Events//
-        canvas.onmousedown = function(e){ drag = true };
-        canvas.onmouseup =function(e){ drag = false };
+        canvas.onmousedown = function(e){ setDragStatus(true) };
+        canvas.onmouseup =function(e){ setDragStatus(false) };
         rangeX.onchange = function(e){
             updateClipX(e.target.value);
         }
@@ -249,8 +255,7 @@
     window.onkeyup = function(e){
       const code = e.with || e.keyCode;
       if(parseInt(code) == 68){
-        drag=!drag;
-        showDragInfo();
+        setDragStatus(!drag);
       }
     }
     
